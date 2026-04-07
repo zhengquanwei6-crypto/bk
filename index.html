@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A premium single-page confession template with cinematic visuals, story timelines, and interactive moments." />
+  <title>高端告白模板 | Luxury Confession SPA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles/main.css" />
+</head>
+<body>
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader__panel">
+      <p class="preloader__label">LOVE EXPERIENCE</p>
+      <h2 class="preloader__title">正在加载高端告白模板</h2>
+      <div class="preloader__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span id="preloader-progress"></span>
+      </div>
+      <p class="preloader__percent" id="preloader-percent">0%</p>
+    </div>
+  </div>
+
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <canvas id="ceremony-canvas" aria-hidden="true"></canvas>
+
+  <header class="site-header" id="site-header">
+    <a href="#hero" class="brand">Love <span>Template</span></a>
+    <nav aria-label="页面导航">
+      <ul>
+        <li><a href="#story">叙事线</a></li>
+        <li><a href="#moments">记忆库</a></li>
+        <li><a href="#gallery">誓言库</a></li>
+        <li><a href="#quiz">问答区</a></li>
+        <li><a href="#finale">结尾区</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="ghost-btn" id="music-toggle" type="button" aria-pressed="false">开启背景乐</button>
+      <button class="solid-btn magnetic" id="open-ritual" type="button">开始展示</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero__bg-orb hero__bg-orb--a" aria-hidden="true"></div>
+      <div class="hero__bg-orb hero__bg-orb--b" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="hero__kicker">A CURATED LOVE EXPERIENCE</p>
+        <h1>
+          这是一个可直接套用的<br />
+          单页高定告白
+          <span>沉浸式模板</span>
+        </h1>
+        <p class="hero__intro" id="typed-intro"></p>
+        <div class="hero__actions">
+          <a class="solid-btn magnetic" href="#story">进入模板章节</a>
+          <button type="button" class="ghost-btn magnetic" id="show-random-note">随机预览文案</button>
+        </div>
+        <div class="hero__stats" id="hero-stats">
+          <article>
+            <h3 id="stat-days">0</h3>
+            <p>关系累计天数</p>
+          </article>
+          <article>
+            <h3 id="stat-notes">0</h3>
+            <p>可用记忆短笺</p>
+          </article>
+          <article>
+            <h3 id="stat-promises">0</h3>
+            <p>可用誓言条目</p>
+          </article>
+        </div>
+      </div>
+      <div class="hero__card tilt-card" id="hero-card">
+        <p class="tilt-card__label">LOVE PASSPORT</p>
+        <h2>Destination: Your Story</h2>
+        <p>把名字与纪念日替换后，这页就能成为专属于你们的高质感告白单页。</p>
+        <div class="tilt-card__footer">
+          <span>Valid Through</span>
+          <strong>Forever</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="story section" id="story">
+      <div class="section__heading">
+        <p>Chapter I</p>
+        <h2>关系故事线模板</h2>
+      </div>
+      <div class="story__layout">
+        <aside class="story__summary">
+          <h3>Timeline Template</h3>
+          <p>每个节点都可以替换为你们自己的故事，自动组成完整叙事节奏。</p>
+          <div class="countdown" id="anniversary-countdown">
+            <h4>距离下个纪念日</h4>
+            <div class="countdown__grid">
+              <div><strong id="cd-days">00</strong><span>天</span></div>
+              <div><strong id="cd-hours">00</strong><span>时</span></div>
+              <div><strong id="cd-minutes">00</strong><span>分</span></div>
+              <div><strong id="cd-seconds">00</strong><span>秒</span></div>
+            </div>
+          </div>
+        </aside>
+        <div class="story__timeline" id="timeline-list" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="moments section" id="moments">
+      <div class="section__heading">
+        <p>Chapter II</p>
+        <h2>记忆文案库</h2>
+      </div>
+      <div class="moments__toolbar">
+        <label class="field">
+          <span>关键词</span>
+          <input type="search" id="note-search" placeholder="例如：日常、旅行、纪念日、拥抱" />
+        </label>
+        <label class="field">
+          <span>情绪维度</span>
+          <select id="note-mood-filter">
+            <option value="all">全部情绪</option>
+            <option value="温柔">温柔</option>
+            <option value="热烈">热烈</option>
+            <option value="治愈">治愈</option>
+            <option value="勇敢">勇敢</option>
+            <option value="浪漫">浪漫</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>故事阶段</span>
+          <select id="note-phase-filter">
+            <option value="all">全部阶段</option>
+            <option value="初遇">初遇</option>
+            <option value="相知">相知</option>
+            <option value="热恋">热恋</option>
+            <option value="并肩">并肩</option>
+            <option value="未来">未来</option>
+          </select>
+        </label>
+        <button class="ghost-btn magnetic" id="shuffle-notes" type="button">随机重排文案</button>
+      </div>
+      <div class="moments__grid" id="notes-grid" aria-live="polite"></div>
+      <div class="pagination" id="notes-pagination"></div>
+    </section>
+
+    <section class="gallery section" id="gallery">
+      <div class="section__heading">
+        <p>Chapter III</p>
+        <h2>视觉画廊与誓言库</h2>
+      </div>
+      <div class="gallery__layout">
+        <div class="palette-wall" id="palette-wall"></div>
+        <div class="promise-theater">
+          <h3>Promise Theater</h3>
+          <p id="promise-text">这里会展示可直接替换名字使用的通用承诺语句。</p>
+          <div class="promise-actions">
+            <button class="solid-btn magnetic" type="button" id="next-promise">下一条文案</button>
+            <button class="ghost-btn magnetic" type="button" id="pin-promise">收藏当前句</button>
+          </div>
+          <ul id="pinned-promises" class="pinned-promises"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="quiz section" id="quiz">
+      <div class="section__heading">
+        <p>Chapter IV</p>
+        <h2>互动问答模板</h2>
+      </div>
+      <div class="quiz__panel" id="quiz-panel">
+        <p class="quiz__badge" id="quiz-progress">Q 1 / 5</p>
+        <h3 id="quiz-question">你们最想保留的关系关键词是什么？</h3>
+        <div class="quiz__answers" id="quiz-answers"></div>
+        <p class="quiz__feedback" id="quiz-feedback"></p>
+      </div>
+    </section>
+
+    <section class="finale section" id="finale">
+      <div class="section__heading">
+        <p>Chapter V</p>
+        <h2>最终收束章节</h2>
+      </div>
+      <div class="finale__card" id="finale-card">
+        <p class="finale__lead">If love can be archived, this page is my permanent record.</p>
+        <h3 id="finale-title">愿意一起把下一段日子，写成更成熟的双向奔赴吗？</h3>
+        <p id="finale-body">
+          这是一份可编辑的告白收束段落：换成你真实想说的话，就能直接用于发布或分享。
+        </p>
+        <div class="finale__actions">
+          <button type="button" class="solid-btn magnetic" id="launch-confetti">播放烟花效果</button>
+          <button type="button" class="ghost-btn magnetic" id="export-letter">导出模板信</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="note-modal" id="note-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="note-modal__backdrop" data-close-modal></div>
+    <article class="note-modal__panel">
+      <button class="note-modal__close" data-close-modal type="button" aria-label="关闭">×</button>
+      <p class="note-modal__meta" id="modal-meta"></p>
+      <h3 id="modal-title"></h3>
+      <p id="modal-detail"></p>
+      <blockquote id="modal-promise"></blockquote>
+    </article>
+  </aside>
+
+  <aside class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></aside>
+
+  <script>
+    window.setTimeout(function () {
+      var pre = document.getElementById("preloader");
+      if (pre && !pre.classList.contains("is-hidden")) {
+        pre.classList.add("is-hidden");
+      }
+    }, 7000);
+  </script>
+  <script src="./scripts/template-config.js"></script>
+  <script src="./scripts/love-notes.js"></script>
+  <script src="./scripts/app.js"></script>
+</body>
+</html>

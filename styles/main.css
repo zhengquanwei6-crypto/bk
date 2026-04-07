@@ -1,0 +1,6454 @@
+﻿:root {
+  --bg-cream: #f8f4eb;
+  --bg-ivory: #fffaf2;
+  --bg-gold: #f4d48a;
+  --bg-caramel: #cf9f63;
+  --ink-rich: #1c1a17;
+  --ink-soft: #4b4235;
+  --ink-muted: #786a57;
+  --rose: #f3a895;
+  --coral: #e67d61;
+  --teal: #2f8574;
+  --emerald: #4ca46f;
+  --line: rgba(60, 44, 24, 0.18);
+  --glass: rgba(255, 248, 236, 0.66);
+  --shadow-soft: 0 16px 40px rgba(44, 29, 12, 0.12);
+  --shadow-strong: 0 30px 80px rgba(39, 19, 4, 0.2);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Outfit", "Noto Sans SC", sans-serif;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(243, 168, 149, 0.35), transparent 30%),
+    radial-gradient(circle at 85% 8%, rgba(76, 164, 111, 0.22), transparent 36%),
+    linear-gradient(140deg, var(--bg-ivory) 0%, var(--bg-cream) 56%, #f7eed9 100%);
+  color: var(--ink-rich);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+main {
+  width: min(1240px, calc(100% - 3rem));
+  margin: 0 auto;
+  padding: 8rem 0 8rem;
+  position: relative;
+  z-index: 3;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+#ambient-canvas,
+#ceremony-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#ambient-canvas {
+  z-index: 0;
+}
+
+#ceremony-canvas {
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-premium);
+}
+
+body.is-ceremony #ceremony-canvas {
+  opacity: 1;
+}
+
+#cursor-dot,
+#cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: multiply;
+}
+
+#cursor-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--coral), var(--rose));
+}
+
+#cursor-ring {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(230, 125, 97, 0.55);
+  border-radius: 50%;
+  transition: width 0.25s var(--ease-premium), height 0.25s var(--ease-premium), border-color 0.25s var(--ease-premium);
+}
+
+body.is-hovering #cursor-ring {
+  width: 66px;
+  height: 66px;
+  border-color: rgba(47, 133, 116, 0.62);
+}
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(145deg, #19150f, #34271a);
+  color: #f8edd7;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  transition: opacity 0.7s var(--ease-premium), visibility 0.7s var(--ease-premium);
+}
+
+.preloader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.preloader__panel {
+  width: min(500px, calc(100% - 2rem));
+  text-align: center;
+  border: 1px solid rgba(248, 237, 215, 0.18);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+}
+
+.preloader__label {
+  font-size: 0.82rem;
+  letter-spacing: 0.28em;
+  opacity: 0.72;
+}
+
+.preloader__title {
+  margin-top: 0.9rem;
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-weight: 600;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+.preloader__bar {
+  margin-top: 1.5rem;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.preloader__bar span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f3a895, #f4d48a, #4ca46f);
+  transition: width 0.3s ease;
+}
+
+.preloader__percent {
+  margin-top: 1rem;
+  letter-spacing: 0.08em;
+}
+
+.site-header {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1240px, calc(100% - 2rem));
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-soft);
+  padding: 0.85rem 1rem 0.85rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.brand {
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.brand span {
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-size: 1.2rem;
+  color: var(--teal);
+}
+
+.site-header nav ul {
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+}
+
+.site-header nav a {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  position: relative;
+  padding-bottom: 0.2rem;
+}
+
+.site-header nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.05rem;
+  width: 0;
+  height: 1px;
+  background: var(--teal);
+  transition: width 0.35s var(--ease-premium);
+}
+
+.site-header nav a:hover::after,
+.site-header nav a:focus-visible::after {
+  width: 100%;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.solid-btn,
+.ghost-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.72rem 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-premium), box-shadow 0.3s var(--ease-premium), background 0.3s ease;
+}
+
+.solid-btn {
+  background: linear-gradient(135deg, #eb8b6e, #e86a48);
+  color: #fff8ed;
+  box-shadow: 0 14px 28px rgba(200, 82, 45, 0.35);
+}
+
+.solid-btn:hover,
+.solid-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(200, 82, 45, 0.4);
+}
+
+.ghost-btn {
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid var(--line);
+}
+
+.ghost-btn:hover,
+.ghost-btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.section {
+  margin-top: 6rem;
+  background: rgba(255, 252, 244, 0.72);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.4rem, 3vw, 2.8rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.36), transparent 55%);
+  pointer-events: none;
+}
+
+.section__heading p {
+  font-size: 0.83rem;
+  letter-spacing: 0.26em;
+  color: var(--ink-muted);
+}
+
+.section__heading h2 {
+  margin-top: 0.45rem;
+  font-size: clamp(1.8rem, 4vw, 2.9rem);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  line-height: 1.16;
+}
+
+.hero {
+  min-height: calc(100vh - 3.5rem);
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: clamp(1.6rem, 3vw, 3.8rem);
+  position: relative;
+}
+
+.hero__bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.hero__bg-orb--a {
+  width: min(34vw, 520px);
+  height: min(34vw, 520px);
+  top: 10%;
+  left: -12%;
+  background: radial-gradient(circle at 35% 40%, rgba(243, 168, 149, 0.55), rgba(243, 168, 149, 0));
+  animation: orbFloatA 10s ease-in-out infinite;
+}
+
+.hero__bg-orb--b {
+  width: min(38vw, 580px);
+  height: min(38vw, 580px);
+  right: -16%;
+  bottom: 6%;
+  background: radial-gradient(circle at 52% 45%, rgba(76, 164, 111, 0.42), rgba(76, 164, 111, 0));
+  animation: orbFloatB 12s ease-in-out infinite;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__kicker {
+  letter-spacing: 0.28em;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.hero h1 {
+  margin-top: 1rem;
+  font-size: clamp(2.3rem, 5vw, 4.6rem);
+  line-height: 1.08;
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+}
+
+.hero h1 span {
+  color: var(--coral);
+}
+
+.hero__intro {
+  margin-top: 1rem;
+  min-height: 3.2em;
+  max-width: 52ch;
+  color: var(--ink-soft);
+  font-size: 1.03rem;
+}
+
+.hero__actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hero__stats {
+  margin-top: 1.7rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.hero__stats article {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.62);
+  padding: 0.85rem;
+}
+
+.hero__stats h3 {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.hero__stats p {
+  margin-top: 0.2rem;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.tilt-card {
+  position: relative;
+  min-height: 360px;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: linear-gradient(145deg, rgba(255, 244, 223, 0.8), rgba(255, 255, 255, 0.38));
+  box-shadow: var(--shadow-strong);
+  backdrop-filter: blur(12px);
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  transition: transform 0.3s var(--ease-premium);
+}
+
+.tilt-card__label {
+  font-size: 0.76rem;
+  letter-spacing: 0.22em;
+  color: var(--ink-muted);
+}
+
+.tilt-card h2 {
+  margin-top: 0.75rem;
+  font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+}
+
+.tilt-card p {
+  margin-top: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.tilt-card__footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.92rem;
+}
+
+.tilt-card__footer strong {
+  color: var(--coral);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-size: 1.1rem;
+}
+
+.story__layout {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.2rem;
+}
+
+.story__summary {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.58);
+  align-self: start;
+  position: sticky;
+  top: 6rem;
+}
+
+.story__summary h3 {
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-size: 1.7rem;
+}
+
+.story__summary p {
+  margin-top: 0.5rem;
+  color: var(--ink-soft);
+}
+
+.countdown {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--line);
+  padding-top: 0.8rem;
+}
+
+.countdown h4 {
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+}
+
+.countdown__grid {
+  margin-top: 0.6rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.countdown__grid div {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.4rem;
+  text-align: center;
+}
+
+.countdown__grid strong {
+  display: block;
+  color: var(--teal);
+  font-size: 1.15rem;
+}
+
+.countdown__grid span {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.story__timeline {
+  position: relative;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.story-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.story-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, rgba(230, 125, 97, 0.7), rgba(47, 133, 116, 0.7));
+}
+
+.story-item h3 {
+  margin-left: 0.8rem;
+  font-size: 1.12rem;
+}
+
+.story-item p {
+  margin-top: 0.45rem;
+  margin-left: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.story-item footer {
+  margin-top: 0.7rem;
+  margin-left: 0.8rem;
+  display: flex;
+  gap: 0.7rem;
+  color: var(--ink-muted);
+  font-size: 0.86rem;
+}
+
+.moments__toolbar {
+  margin-top: 1.3rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.field input,
+.field select,
+textarea {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: var(--radius-md);
+  padding: 0.7rem 0.85rem;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field input:focus,
+.field select:focus,
+textarea:focus {
+  border-color: rgba(47, 133, 116, 0.58);
+  box-shadow: 0 0 0 3px rgba(76, 164, 111, 0.16);
+}
+
+.moments__grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.note-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-premium), box-shadow 0.3s var(--ease-premium);
+}
+
+.note-card:hover,
+.note-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 30px rgba(34, 20, 5, 0.12);
+}
+
+.note-card__meta {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: rgba(28, 26, 23, 0.72);
+}
+
+.note-card h3 {
+  margin-top: 0.6rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+}
+
+.note-card p {
+  margin-top: 0.6rem;
+  color: rgba(35, 32, 28, 0.8);
+  font-size: 0.94rem;
+}
+
+.note-card footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: rgba(35, 32, 28, 0.74);
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.pagination button {
+  min-width: 2.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+}
+
+.pagination button.is-active {
+  background: linear-gradient(135deg, #e67d61, #eaa96d);
+  color: #fffaf0;
+}
+
+.gallery__layout {
+  margin-top: 1.4rem;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1rem;
+}
+
+.palette-wall {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.palette-chip {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  min-height: 88px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.palette-chip span {
+  position: absolute;
+  left: 0.45rem;
+  bottom: 0.35rem;
+  font-size: 0.7rem;
+  color: rgba(20, 18, 16, 0.75);
+  background: rgba(255, 255, 255, 0.65);
+  padding: 0.16rem 0.4rem;
+  border-radius: 999px;
+}
+
+.promise-theater {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.promise-theater h3 {
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+}
+
+.promise-theater p {
+  margin-top: 0.7rem;
+  min-height: 5.2em;
+  color: var(--ink-soft);
+}
+
+.promise-actions {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.55rem;
+}
+
+.pinned-promises {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.4rem;
+  max-height: 220px;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.pinned-promises li {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.55rem 0.7rem;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.quiz__panel {
+  margin-top: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 244, 230, 0.58));
+  padding: 1.35rem;
+}
+
+.quiz__badge {
+  display: inline-block;
+  border-radius: 999px;
+  background: rgba(47, 133, 116, 0.14);
+  padding: 0.28rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--teal);
+}
+
+.quiz__panel h3 {
+  margin-top: 0.8rem;
+  font-size: clamp(1.3rem, 2.8vw, 2rem);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+}
+
+.quiz__answers {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.quiz__answers button {
+  text-align: left;
+  padding: 0.72rem 0.88rem;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: transform 0.25s var(--ease-premium), border-color 0.25s ease;
+}
+
+.quiz__answers button:hover {
+  transform: translateX(4px);
+  border-color: rgba(47, 133, 116, 0.5);
+}
+
+.quiz__feedback {
+  margin-top: 0.8rem;
+  min-height: 2em;
+  color: var(--ink-soft);
+}
+
+.finale__card {
+  margin-top: 1.3rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: linear-gradient(145deg, rgba(47, 133, 116, 0.12), rgba(255, 255, 255, 0.72));
+  box-shadow: var(--shadow-soft);
+  padding: 1.6rem;
+}
+
+.finale__lead {
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.finale__card h3 {
+  margin-top: 0.7rem;
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  line-height: 1.2;
+}
+
+.finale__card p {
+  margin-top: 0.75rem;
+  color: var(--ink-soft);
+}
+
+.finale__actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.note-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.note-modal.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.note-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 12, 10, 0.48);
+  backdrop-filter: blur(6px);
+}
+
+.note-modal__panel {
+  position: relative;
+  width: min(700px, calc(100% - 2rem));
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: linear-gradient(150deg, rgba(255, 247, 230, 0.96), rgba(255, 255, 255, 0.9));
+  box-shadow: var(--shadow-strong);
+  padding: 1.4rem;
+  z-index: 1;
+}
+
+.note-modal__close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+}
+
+.note-modal__meta {
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+.note-modal h3 {
+  margin-top: 0.6rem;
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+}
+
+.note-modal blockquote {
+  margin-top: 1rem;
+  border-left: 4px solid rgba(230, 125, 97, 0.45);
+  padding-left: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.toast-stack {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  display: grid;
+  gap: 0.55rem;
+  z-index: 160;
+}
+
+.toast {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 252, 244, 0.92);
+  box-shadow: var(--shadow-soft);
+  padding: 0.6rem 0.75rem;
+  min-width: 220px;
+  animation: toastIn 0.45s var(--ease-premium);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s var(--ease-premium), transform 0.65s var(--ease-premium);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbFloatA {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) scale(1.04);
+  }
+}
+
+@keyframes orbFloatB {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+@media (max-width: 1080px) {
+  .site-header nav {
+    display: none;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: 5rem;
+  }
+
+  .story__layout,
+  .gallery__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .story__summary {
+    position: static;
+  }
+
+  .moments__toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .moments__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .palette-wall {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  main {
+    width: calc(100% - 1.4rem);
+    padding-top: 6.2rem;
+  }
+
+  .site-header {
+    width: calc(100% - 1rem);
+    border-radius: 20px;
+    top: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0.7rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .moments__toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .moments__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .palette-wall {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .countdown__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #cursor-dot,
+  #cursor-ring {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dynamic tone classes for note cards and palette chips. */
+.tone-001 {
+  background: linear-gradient(135deg, hsl(25 82% 88%), hsl(51 76% 84%), hsl(171 62% 86%));
+}
+
+.tone-001::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-002 {
+  background: linear-gradient(135deg, hsl(32 82% 88%), hsl(60 76% 84%), hsl(182 62% 86%));
+}
+
+.tone-002::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-003 {
+  background: linear-gradient(135deg, hsl(39 82% 88%), hsl(69 76% 84%), hsl(193 62% 86%));
+}
+
+.tone-003::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-004 {
+  background: linear-gradient(135deg, hsl(46 82% 88%), hsl(78 76% 84%), hsl(204 62% 86%));
+}
+
+.tone-004::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-005 {
+  background: linear-gradient(135deg, hsl(53 82% 88%), hsl(87 76% 84%), hsl(215 62% 86%));
+}
+
+.tone-005::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-006 {
+  background: linear-gradient(135deg, hsl(60 82% 88%), hsl(96 76% 84%), hsl(226 62% 86%));
+}
+
+.tone-006::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-007 {
+  background: linear-gradient(135deg, hsl(67 82% 88%), hsl(105 76% 84%), hsl(237 62% 86%));
+}
+
+.tone-007::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-008 {
+  background: linear-gradient(135deg, hsl(74 82% 88%), hsl(114 76% 84%), hsl(248 62% 86%));
+}
+
+.tone-008::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-009 {
+  background: linear-gradient(135deg, hsl(81 82% 88%), hsl(123 76% 84%), hsl(259 62% 86%));
+}
+
+.tone-009::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-010 {
+  background: linear-gradient(135deg, hsl(88 82% 88%), hsl(132 76% 84%), hsl(270 62% 86%));
+}
+
+.tone-010::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-011 {
+  background: linear-gradient(135deg, hsl(95 82% 88%), hsl(141 76% 84%), hsl(281 62% 86%));
+}
+
+.tone-011::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-012 {
+  background: linear-gradient(135deg, hsl(102 82% 88%), hsl(150 76% 84%), hsl(292 62% 86%));
+}
+
+.tone-012::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-013 {
+  background: linear-gradient(135deg, hsl(109 82% 88%), hsl(159 76% 84%), hsl(303 62% 86%));
+}
+
+.tone-013::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-014 {
+  background: linear-gradient(135deg, hsl(116 82% 88%), hsl(168 76% 84%), hsl(314 62% 86%));
+}
+
+.tone-014::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-015 {
+  background: linear-gradient(135deg, hsl(123 82% 88%), hsl(177 76% 84%), hsl(325 62% 86%));
+}
+
+.tone-015::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-016 {
+  background: linear-gradient(135deg, hsl(130 82% 88%), hsl(186 76% 84%), hsl(336 62% 86%));
+}
+
+.tone-016::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-017 {
+  background: linear-gradient(135deg, hsl(137 82% 88%), hsl(195 76% 84%), hsl(347 62% 86%));
+}
+
+.tone-017::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-018 {
+  background: linear-gradient(135deg, hsl(144 82% 88%), hsl(204 76% 84%), hsl(358 62% 86%));
+}
+
+.tone-018::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-019 {
+  background: linear-gradient(135deg, hsl(151 82% 88%), hsl(213 76% 84%), hsl(369 62% 86%));
+}
+
+.tone-019::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-020 {
+  background: linear-gradient(135deg, hsl(158 82% 88%), hsl(222 76% 84%), hsl(380 62% 86%));
+}
+
+.tone-020::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-021 {
+  background: linear-gradient(135deg, hsl(165 82% 88%), hsl(231 76% 84%), hsl(391 62% 86%));
+}
+
+.tone-021::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-022 {
+  background: linear-gradient(135deg, hsl(172 82% 88%), hsl(240 76% 84%), hsl(402 62% 86%));
+}
+
+.tone-022::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-023 {
+  background: linear-gradient(135deg, hsl(179 82% 88%), hsl(249 76% 84%), hsl(413 62% 86%));
+}
+
+.tone-023::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-024 {
+  background: linear-gradient(135deg, hsl(186 82% 88%), hsl(258 76% 84%), hsl(424 62% 86%));
+}
+
+.tone-024::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-025 {
+  background: linear-gradient(135deg, hsl(193 82% 88%), hsl(267 76% 84%), hsl(435 62% 86%));
+}
+
+.tone-025::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-026 {
+  background: linear-gradient(135deg, hsl(200 82% 88%), hsl(276 76% 84%), hsl(446 62% 86%));
+}
+
+.tone-026::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-027 {
+  background: linear-gradient(135deg, hsl(207 82% 88%), hsl(285 76% 84%), hsl(457 62% 86%));
+}
+
+.tone-027::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-028 {
+  background: linear-gradient(135deg, hsl(214 82% 88%), hsl(294 76% 84%), hsl(468 62% 86%));
+}
+
+.tone-028::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-029 {
+  background: linear-gradient(135deg, hsl(221 82% 88%), hsl(303 76% 84%), hsl(479 62% 86%));
+}
+
+.tone-029::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-030 {
+  background: linear-gradient(135deg, hsl(228 82% 88%), hsl(312 76% 84%), hsl(490 62% 86%));
+}
+
+.tone-030::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-031 {
+  background: linear-gradient(135deg, hsl(235 82% 88%), hsl(321 76% 84%), hsl(501 62% 86%));
+}
+
+.tone-031::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-032 {
+  background: linear-gradient(135deg, hsl(242 82% 88%), hsl(330 76% 84%), hsl(512 62% 86%));
+}
+
+.tone-032::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-033 {
+  background: linear-gradient(135deg, hsl(249 82% 88%), hsl(339 76% 84%), hsl(163 62% 86%));
+}
+
+.tone-033::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-034 {
+  background: linear-gradient(135deg, hsl(256 82% 88%), hsl(348 76% 84%), hsl(174 62% 86%));
+}
+
+.tone-034::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-035 {
+  background: linear-gradient(135deg, hsl(263 82% 88%), hsl(357 76% 84%), hsl(185 62% 86%));
+}
+
+.tone-035::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-036 {
+  background: linear-gradient(135deg, hsl(270 82% 88%), hsl(366 76% 84%), hsl(196 62% 86%));
+}
+
+.tone-036::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-037 {
+  background: linear-gradient(135deg, hsl(277 82% 88%), hsl(375 76% 84%), hsl(207 62% 86%));
+}
+
+.tone-037::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-038 {
+  background: linear-gradient(135deg, hsl(284 82% 88%), hsl(384 76% 84%), hsl(218 62% 86%));
+}
+
+.tone-038::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-039 {
+  background: linear-gradient(135deg, hsl(291 82% 88%), hsl(393 76% 84%), hsl(229 62% 86%));
+}
+
+.tone-039::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-040 {
+  background: linear-gradient(135deg, hsl(298 82% 88%), hsl(42 76% 84%), hsl(240 62% 86%));
+}
+
+.tone-040::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-041 {
+  background: linear-gradient(135deg, hsl(305 82% 88%), hsl(51 76% 84%), hsl(251 62% 86%));
+}
+
+.tone-041::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-042 {
+  background: linear-gradient(135deg, hsl(312 82% 88%), hsl(60 76% 84%), hsl(262 62% 86%));
+}
+
+.tone-042::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-043 {
+  background: linear-gradient(135deg, hsl(319 82% 88%), hsl(69 76% 84%), hsl(273 62% 86%));
+}
+
+.tone-043::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-044 {
+  background: linear-gradient(135deg, hsl(326 82% 88%), hsl(78 76% 84%), hsl(284 62% 86%));
+}
+
+.tone-044::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-045 {
+  background: linear-gradient(135deg, hsl(333 82% 88%), hsl(87 76% 84%), hsl(295 62% 86%));
+}
+
+.tone-045::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-046 {
+  background: linear-gradient(135deg, hsl(340 82% 88%), hsl(96 76% 84%), hsl(306 62% 86%));
+}
+
+.tone-046::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-047 {
+  background: linear-gradient(135deg, hsl(347 82% 88%), hsl(105 76% 84%), hsl(317 62% 86%));
+}
+
+.tone-047::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-048 {
+  background: linear-gradient(135deg, hsl(354 82% 88%), hsl(114 76% 84%), hsl(328 62% 86%));
+}
+
+.tone-048::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-049 {
+  background: linear-gradient(135deg, hsl(361 82% 88%), hsl(123 76% 84%), hsl(339 62% 86%));
+}
+
+.tone-049::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-050 {
+  background: linear-gradient(135deg, hsl(368 82% 88%), hsl(132 76% 84%), hsl(350 62% 86%));
+}
+
+.tone-050::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-051 {
+  background: linear-gradient(135deg, hsl(375 82% 88%), hsl(141 76% 84%), hsl(361 62% 86%));
+}
+
+.tone-051::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-052 {
+  background: linear-gradient(135deg, hsl(22 82% 88%), hsl(150 76% 84%), hsl(372 62% 86%));
+}
+
+.tone-052::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-053 {
+  background: linear-gradient(135deg, hsl(29 82% 88%), hsl(159 76% 84%), hsl(383 62% 86%));
+}
+
+.tone-053::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-054 {
+  background: linear-gradient(135deg, hsl(36 82% 88%), hsl(168 76% 84%), hsl(394 62% 86%));
+}
+
+.tone-054::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-055 {
+  background: linear-gradient(135deg, hsl(43 82% 88%), hsl(177 76% 84%), hsl(405 62% 86%));
+}
+
+.tone-055::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-056 {
+  background: linear-gradient(135deg, hsl(50 82% 88%), hsl(186 76% 84%), hsl(416 62% 86%));
+}
+
+.tone-056::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-057 {
+  background: linear-gradient(135deg, hsl(57 82% 88%), hsl(195 76% 84%), hsl(427 62% 86%));
+}
+
+.tone-057::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-058 {
+  background: linear-gradient(135deg, hsl(64 82% 88%), hsl(204 76% 84%), hsl(438 62% 86%));
+}
+
+.tone-058::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-059 {
+  background: linear-gradient(135deg, hsl(71 82% 88%), hsl(213 76% 84%), hsl(449 62% 86%));
+}
+
+.tone-059::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-060 {
+  background: linear-gradient(135deg, hsl(78 82% 88%), hsl(222 76% 84%), hsl(460 62% 86%));
+}
+
+.tone-060::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-061 {
+  background: linear-gradient(135deg, hsl(85 82% 88%), hsl(231 76% 84%), hsl(471 62% 86%));
+}
+
+.tone-061::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-062 {
+  background: linear-gradient(135deg, hsl(92 82% 88%), hsl(240 76% 84%), hsl(482 62% 86%));
+}
+
+.tone-062::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-063 {
+  background: linear-gradient(135deg, hsl(99 82% 88%), hsl(249 76% 84%), hsl(493 62% 86%));
+}
+
+.tone-063::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-064 {
+  background: linear-gradient(135deg, hsl(106 82% 88%), hsl(258 76% 84%), hsl(504 62% 86%));
+}
+
+.tone-064::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-065 {
+  background: linear-gradient(135deg, hsl(113 82% 88%), hsl(267 76% 84%), hsl(515 62% 86%));
+}
+
+.tone-065::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-066 {
+  background: linear-gradient(135deg, hsl(120 82% 88%), hsl(276 76% 84%), hsl(166 62% 86%));
+}
+
+.tone-066::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-067 {
+  background: linear-gradient(135deg, hsl(127 82% 88%), hsl(285 76% 84%), hsl(177 62% 86%));
+}
+
+.tone-067::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-068 {
+  background: linear-gradient(135deg, hsl(134 82% 88%), hsl(294 76% 84%), hsl(188 62% 86%));
+}
+
+.tone-068::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-069 {
+  background: linear-gradient(135deg, hsl(141 82% 88%), hsl(303 76% 84%), hsl(199 62% 86%));
+}
+
+.tone-069::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-070 {
+  background: linear-gradient(135deg, hsl(148 82% 88%), hsl(312 76% 84%), hsl(210 62% 86%));
+}
+
+.tone-070::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-071 {
+  background: linear-gradient(135deg, hsl(155 82% 88%), hsl(321 76% 84%), hsl(221 62% 86%));
+}
+
+.tone-071::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-072 {
+  background: linear-gradient(135deg, hsl(162 82% 88%), hsl(330 76% 84%), hsl(232 62% 86%));
+}
+
+.tone-072::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-073 {
+  background: linear-gradient(135deg, hsl(169 82% 88%), hsl(339 76% 84%), hsl(243 62% 86%));
+}
+
+.tone-073::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-074 {
+  background: linear-gradient(135deg, hsl(176 82% 88%), hsl(348 76% 84%), hsl(254 62% 86%));
+}
+
+.tone-074::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-075 {
+  background: linear-gradient(135deg, hsl(183 82% 88%), hsl(357 76% 84%), hsl(265 62% 86%));
+}
+
+.tone-075::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-076 {
+  background: linear-gradient(135deg, hsl(190 82% 88%), hsl(366 76% 84%), hsl(276 62% 86%));
+}
+
+.tone-076::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-077 {
+  background: linear-gradient(135deg, hsl(197 82% 88%), hsl(375 76% 84%), hsl(287 62% 86%));
+}
+
+.tone-077::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-078 {
+  background: linear-gradient(135deg, hsl(204 82% 88%), hsl(384 76% 84%), hsl(298 62% 86%));
+}
+
+.tone-078::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-079 {
+  background: linear-gradient(135deg, hsl(211 82% 88%), hsl(393 76% 84%), hsl(309 62% 86%));
+}
+
+.tone-079::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-080 {
+  background: linear-gradient(135deg, hsl(218 82% 88%), hsl(42 76% 84%), hsl(320 62% 86%));
+}
+
+.tone-080::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-081 {
+  background: linear-gradient(135deg, hsl(225 82% 88%), hsl(51 76% 84%), hsl(331 62% 86%));
+}
+
+.tone-081::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-082 {
+  background: linear-gradient(135deg, hsl(232 82% 88%), hsl(60 76% 84%), hsl(342 62% 86%));
+}
+
+.tone-082::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-083 {
+  background: linear-gradient(135deg, hsl(239 82% 88%), hsl(69 76% 84%), hsl(353 62% 86%));
+}
+
+.tone-083::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-084 {
+  background: linear-gradient(135deg, hsl(246 82% 88%), hsl(78 76% 84%), hsl(364 62% 86%));
+}
+
+.tone-084::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-085 {
+  background: linear-gradient(135deg, hsl(253 82% 88%), hsl(87 76% 84%), hsl(375 62% 86%));
+}
+
+.tone-085::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-086 {
+  background: linear-gradient(135deg, hsl(260 82% 88%), hsl(96 76% 84%), hsl(386 62% 86%));
+}
+
+.tone-086::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-087 {
+  background: linear-gradient(135deg, hsl(267 82% 88%), hsl(105 76% 84%), hsl(397 62% 86%));
+}
+
+.tone-087::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-088 {
+  background: linear-gradient(135deg, hsl(274 82% 88%), hsl(114 76% 84%), hsl(408 62% 86%));
+}
+
+.tone-088::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-089 {
+  background: linear-gradient(135deg, hsl(281 82% 88%), hsl(123 76% 84%), hsl(419 62% 86%));
+}
+
+.tone-089::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-090 {
+  background: linear-gradient(135deg, hsl(288 82% 88%), hsl(132 76% 84%), hsl(430 62% 86%));
+}
+
+.tone-090::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-091 {
+  background: linear-gradient(135deg, hsl(295 82% 88%), hsl(141 76% 84%), hsl(441 62% 86%));
+}
+
+.tone-091::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-092 {
+  background: linear-gradient(135deg, hsl(302 82% 88%), hsl(150 76% 84%), hsl(452 62% 86%));
+}
+
+.tone-092::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-093 {
+  background: linear-gradient(135deg, hsl(309 82% 88%), hsl(159 76% 84%), hsl(463 62% 86%));
+}
+
+.tone-093::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-094 {
+  background: linear-gradient(135deg, hsl(316 82% 88%), hsl(168 76% 84%), hsl(474 62% 86%));
+}
+
+.tone-094::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-095 {
+  background: linear-gradient(135deg, hsl(323 82% 88%), hsl(177 76% 84%), hsl(485 62% 86%));
+}
+
+.tone-095::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-096 {
+  background: linear-gradient(135deg, hsl(330 82% 88%), hsl(186 76% 84%), hsl(496 62% 86%));
+}
+
+.tone-096::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-097 {
+  background: linear-gradient(135deg, hsl(337 82% 88%), hsl(195 76% 84%), hsl(507 62% 86%));
+}
+
+.tone-097::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-098 {
+  background: linear-gradient(135deg, hsl(344 82% 88%), hsl(204 76% 84%), hsl(518 62% 86%));
+}
+
+.tone-098::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-099 {
+  background: linear-gradient(135deg, hsl(351 82% 88%), hsl(213 76% 84%), hsl(169 62% 86%));
+}
+
+.tone-099::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-100 {
+  background: linear-gradient(135deg, hsl(358 82% 88%), hsl(222 76% 84%), hsl(180 62% 86%));
+}
+
+.tone-100::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-101 {
+  background: linear-gradient(135deg, hsl(365 82% 88%), hsl(231 76% 84%), hsl(191 62% 86%));
+}
+
+.tone-101::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-102 {
+  background: linear-gradient(135deg, hsl(372 82% 88%), hsl(240 76% 84%), hsl(202 62% 86%));
+}
+
+.tone-102::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-103 {
+  background: linear-gradient(135deg, hsl(19 82% 88%), hsl(249 76% 84%), hsl(213 62% 86%));
+}
+
+.tone-103::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-104 {
+  background: linear-gradient(135deg, hsl(26 82% 88%), hsl(258 76% 84%), hsl(224 62% 86%));
+}
+
+.tone-104::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-105 {
+  background: linear-gradient(135deg, hsl(33 82% 88%), hsl(267 76% 84%), hsl(235 62% 86%));
+}
+
+.tone-105::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-106 {
+  background: linear-gradient(135deg, hsl(40 82% 88%), hsl(276 76% 84%), hsl(246 62% 86%));
+}
+
+.tone-106::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-107 {
+  background: linear-gradient(135deg, hsl(47 82% 88%), hsl(285 76% 84%), hsl(257 62% 86%));
+}
+
+.tone-107::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-108 {
+  background: linear-gradient(135deg, hsl(54 82% 88%), hsl(294 76% 84%), hsl(268 62% 86%));
+}
+
+.tone-108::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-109 {
+  background: linear-gradient(135deg, hsl(61 82% 88%), hsl(303 76% 84%), hsl(279 62% 86%));
+}
+
+.tone-109::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-110 {
+  background: linear-gradient(135deg, hsl(68 82% 88%), hsl(312 76% 84%), hsl(290 62% 86%));
+}
+
+.tone-110::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-111 {
+  background: linear-gradient(135deg, hsl(75 82% 88%), hsl(321 76% 84%), hsl(301 62% 86%));
+}
+
+.tone-111::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-112 {
+  background: linear-gradient(135deg, hsl(82 82% 88%), hsl(330 76% 84%), hsl(312 62% 86%));
+}
+
+.tone-112::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-113 {
+  background: linear-gradient(135deg, hsl(89 82% 88%), hsl(339 76% 84%), hsl(323 62% 86%));
+}
+
+.tone-113::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-114 {
+  background: linear-gradient(135deg, hsl(96 82% 88%), hsl(348 76% 84%), hsl(334 62% 86%));
+}
+
+.tone-114::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-115 {
+  background: linear-gradient(135deg, hsl(103 82% 88%), hsl(357 76% 84%), hsl(345 62% 86%));
+}
+
+.tone-115::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-116 {
+  background: linear-gradient(135deg, hsl(110 82% 88%), hsl(366 76% 84%), hsl(356 62% 86%));
+}
+
+.tone-116::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-117 {
+  background: linear-gradient(135deg, hsl(117 82% 88%), hsl(375 76% 84%), hsl(367 62% 86%));
+}
+
+.tone-117::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-118 {
+  background: linear-gradient(135deg, hsl(124 82% 88%), hsl(384 76% 84%), hsl(378 62% 86%));
+}
+
+.tone-118::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-119 {
+  background: linear-gradient(135deg, hsl(131 82% 88%), hsl(393 76% 84%), hsl(389 62% 86%));
+}
+
+.tone-119::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-120 {
+  background: linear-gradient(135deg, hsl(138 82% 88%), hsl(42 76% 84%), hsl(400 62% 86%));
+}
+
+.tone-120::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-121 {
+  background: linear-gradient(135deg, hsl(145 82% 88%), hsl(51 76% 84%), hsl(411 62% 86%));
+}
+
+.tone-121::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-122 {
+  background: linear-gradient(135deg, hsl(152 82% 88%), hsl(60 76% 84%), hsl(422 62% 86%));
+}
+
+.tone-122::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-123 {
+  background: linear-gradient(135deg, hsl(159 82% 88%), hsl(69 76% 84%), hsl(433 62% 86%));
+}
+
+.tone-123::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-124 {
+  background: linear-gradient(135deg, hsl(166 82% 88%), hsl(78 76% 84%), hsl(444 62% 86%));
+}
+
+.tone-124::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-125 {
+  background: linear-gradient(135deg, hsl(173 82% 88%), hsl(87 76% 84%), hsl(455 62% 86%));
+}
+
+.tone-125::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-126 {
+  background: linear-gradient(135deg, hsl(180 82% 88%), hsl(96 76% 84%), hsl(466 62% 86%));
+}
+
+.tone-126::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-127 {
+  background: linear-gradient(135deg, hsl(187 82% 88%), hsl(105 76% 84%), hsl(477 62% 86%));
+}
+
+.tone-127::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-128 {
+  background: linear-gradient(135deg, hsl(194 82% 88%), hsl(114 76% 84%), hsl(488 62% 86%));
+}
+
+.tone-128::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-129 {
+  background: linear-gradient(135deg, hsl(201 82% 88%), hsl(123 76% 84%), hsl(499 62% 86%));
+}
+
+.tone-129::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-130 {
+  background: linear-gradient(135deg, hsl(208 82% 88%), hsl(132 76% 84%), hsl(510 62% 86%));
+}
+
+.tone-130::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-131 {
+  background: linear-gradient(135deg, hsl(215 82% 88%), hsl(141 76% 84%), hsl(161 62% 86%));
+}
+
+.tone-131::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-132 {
+  background: linear-gradient(135deg, hsl(222 82% 88%), hsl(150 76% 84%), hsl(172 62% 86%));
+}
+
+.tone-132::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-133 {
+  background: linear-gradient(135deg, hsl(229 82% 88%), hsl(159 76% 84%), hsl(183 62% 86%));
+}
+
+.tone-133::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-134 {
+  background: linear-gradient(135deg, hsl(236 82% 88%), hsl(168 76% 84%), hsl(194 62% 86%));
+}
+
+.tone-134::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-135 {
+  background: linear-gradient(135deg, hsl(243 82% 88%), hsl(177 76% 84%), hsl(205 62% 86%));
+}
+
+.tone-135::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-136 {
+  background: linear-gradient(135deg, hsl(250 82% 88%), hsl(186 76% 84%), hsl(216 62% 86%));
+}
+
+.tone-136::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-137 {
+  background: linear-gradient(135deg, hsl(257 82% 88%), hsl(195 76% 84%), hsl(227 62% 86%));
+}
+
+.tone-137::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-138 {
+  background: linear-gradient(135deg, hsl(264 82% 88%), hsl(204 76% 84%), hsl(238 62% 86%));
+}
+
+.tone-138::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-139 {
+  background: linear-gradient(135deg, hsl(271 82% 88%), hsl(213 76% 84%), hsl(249 62% 86%));
+}
+
+.tone-139::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-140 {
+  background: linear-gradient(135deg, hsl(278 82% 88%), hsl(222 76% 84%), hsl(260 62% 86%));
+}
+
+.tone-140::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-141 {
+  background: linear-gradient(135deg, hsl(285 82% 88%), hsl(231 76% 84%), hsl(271 62% 86%));
+}
+
+.tone-141::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-142 {
+  background: linear-gradient(135deg, hsl(292 82% 88%), hsl(240 76% 84%), hsl(282 62% 86%));
+}
+
+.tone-142::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-143 {
+  background: linear-gradient(135deg, hsl(299 82% 88%), hsl(249 76% 84%), hsl(293 62% 86%));
+}
+
+.tone-143::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-144 {
+  background: linear-gradient(135deg, hsl(306 82% 88%), hsl(258 76% 84%), hsl(304 62% 86%));
+}
+
+.tone-144::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-145 {
+  background: linear-gradient(135deg, hsl(313 82% 88%), hsl(267 76% 84%), hsl(315 62% 86%));
+}
+
+.tone-145::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-146 {
+  background: linear-gradient(135deg, hsl(320 82% 88%), hsl(276 76% 84%), hsl(326 62% 86%));
+}
+
+.tone-146::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-147 {
+  background: linear-gradient(135deg, hsl(327 82% 88%), hsl(285 76% 84%), hsl(337 62% 86%));
+}
+
+.tone-147::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-148 {
+  background: linear-gradient(135deg, hsl(334 82% 88%), hsl(294 76% 84%), hsl(348 62% 86%));
+}
+
+.tone-148::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-149 {
+  background: linear-gradient(135deg, hsl(341 82% 88%), hsl(303 76% 84%), hsl(359 62% 86%));
+}
+
+.tone-149::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-150 {
+  background: linear-gradient(135deg, hsl(348 82% 88%), hsl(312 76% 84%), hsl(370 62% 86%));
+}
+
+.tone-150::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-151 {
+  background: linear-gradient(135deg, hsl(355 82% 88%), hsl(321 76% 84%), hsl(381 62% 86%));
+}
+
+.tone-151::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-152 {
+  background: linear-gradient(135deg, hsl(362 82% 88%), hsl(330 76% 84%), hsl(392 62% 86%));
+}
+
+.tone-152::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-153 {
+  background: linear-gradient(135deg, hsl(369 82% 88%), hsl(339 76% 84%), hsl(403 62% 86%));
+}
+
+.tone-153::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-154 {
+  background: linear-gradient(135deg, hsl(376 82% 88%), hsl(348 76% 84%), hsl(414 62% 86%));
+}
+
+.tone-154::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-155 {
+  background: linear-gradient(135deg, hsl(23 82% 88%), hsl(357 76% 84%), hsl(425 62% 86%));
+}
+
+.tone-155::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-156 {
+  background: linear-gradient(135deg, hsl(30 82% 88%), hsl(366 76% 84%), hsl(436 62% 86%));
+}
+
+.tone-156::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-157 {
+  background: linear-gradient(135deg, hsl(37 82% 88%), hsl(375 76% 84%), hsl(447 62% 86%));
+}
+
+.tone-157::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-158 {
+  background: linear-gradient(135deg, hsl(44 82% 88%), hsl(384 76% 84%), hsl(458 62% 86%));
+}
+
+.tone-158::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-159 {
+  background: linear-gradient(135deg, hsl(51 82% 88%), hsl(393 76% 84%), hsl(469 62% 86%));
+}
+
+.tone-159::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-160 {
+  background: linear-gradient(135deg, hsl(58 82% 88%), hsl(42 76% 84%), hsl(480 62% 86%));
+}
+
+.tone-160::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-161 {
+  background: linear-gradient(135deg, hsl(65 82% 88%), hsl(51 76% 84%), hsl(491 62% 86%));
+}
+
+.tone-161::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-162 {
+  background: linear-gradient(135deg, hsl(72 82% 88%), hsl(60 76% 84%), hsl(502 62% 86%));
+}
+
+.tone-162::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-163 {
+  background: linear-gradient(135deg, hsl(79 82% 88%), hsl(69 76% 84%), hsl(513 62% 86%));
+}
+
+.tone-163::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-164 {
+  background: linear-gradient(135deg, hsl(86 82% 88%), hsl(78 76% 84%), hsl(164 62% 86%));
+}
+
+.tone-164::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-165 {
+  background: linear-gradient(135deg, hsl(93 82% 88%), hsl(87 76% 84%), hsl(175 62% 86%));
+}
+
+.tone-165::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-166 {
+  background: linear-gradient(135deg, hsl(100 82% 88%), hsl(96 76% 84%), hsl(186 62% 86%));
+}
+
+.tone-166::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-167 {
+  background: linear-gradient(135deg, hsl(107 82% 88%), hsl(105 76% 84%), hsl(197 62% 86%));
+}
+
+.tone-167::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-168 {
+  background: linear-gradient(135deg, hsl(114 82% 88%), hsl(114 76% 84%), hsl(208 62% 86%));
+}
+
+.tone-168::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-169 {
+  background: linear-gradient(135deg, hsl(121 82% 88%), hsl(123 76% 84%), hsl(219 62% 86%));
+}
+
+.tone-169::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-170 {
+  background: linear-gradient(135deg, hsl(128 82% 88%), hsl(132 76% 84%), hsl(230 62% 86%));
+}
+
+.tone-170::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-171 {
+  background: linear-gradient(135deg, hsl(135 82% 88%), hsl(141 76% 84%), hsl(241 62% 86%));
+}
+
+.tone-171::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-172 {
+  background: linear-gradient(135deg, hsl(142 82% 88%), hsl(150 76% 84%), hsl(252 62% 86%));
+}
+
+.tone-172::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-173 {
+  background: linear-gradient(135deg, hsl(149 82% 88%), hsl(159 76% 84%), hsl(263 62% 86%));
+}
+
+.tone-173::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-174 {
+  background: linear-gradient(135deg, hsl(156 82% 88%), hsl(168 76% 84%), hsl(274 62% 86%));
+}
+
+.tone-174::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-175 {
+  background: linear-gradient(135deg, hsl(163 82% 88%), hsl(177 76% 84%), hsl(285 62% 86%));
+}
+
+.tone-175::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-176 {
+  background: linear-gradient(135deg, hsl(170 82% 88%), hsl(186 76% 84%), hsl(296 62% 86%));
+}
+
+.tone-176::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-177 {
+  background: linear-gradient(135deg, hsl(177 82% 88%), hsl(195 76% 84%), hsl(307 62% 86%));
+}
+
+.tone-177::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-178 {
+  background: linear-gradient(135deg, hsl(184 82% 88%), hsl(204 76% 84%), hsl(318 62% 86%));
+}
+
+.tone-178::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-179 {
+  background: linear-gradient(135deg, hsl(191 82% 88%), hsl(213 76% 84%), hsl(329 62% 86%));
+}
+
+.tone-179::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-180 {
+  background: linear-gradient(135deg, hsl(198 82% 88%), hsl(222 76% 84%), hsl(340 62% 86%));
+}
+
+.tone-180::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-181 {
+  background: linear-gradient(135deg, hsl(205 82% 88%), hsl(231 76% 84%), hsl(351 62% 86%));
+}
+
+.tone-181::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-182 {
+  background: linear-gradient(135deg, hsl(212 82% 88%), hsl(240 76% 84%), hsl(362 62% 86%));
+}
+
+.tone-182::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-183 {
+  background: linear-gradient(135deg, hsl(219 82% 88%), hsl(249 76% 84%), hsl(373 62% 86%));
+}
+
+.tone-183::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-184 {
+  background: linear-gradient(135deg, hsl(226 82% 88%), hsl(258 76% 84%), hsl(384 62% 86%));
+}
+
+.tone-184::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-185 {
+  background: linear-gradient(135deg, hsl(233 82% 88%), hsl(267 76% 84%), hsl(395 62% 86%));
+}
+
+.tone-185::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-186 {
+  background: linear-gradient(135deg, hsl(240 82% 88%), hsl(276 76% 84%), hsl(406 62% 86%));
+}
+
+.tone-186::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-187 {
+  background: linear-gradient(135deg, hsl(247 82% 88%), hsl(285 76% 84%), hsl(417 62% 86%));
+}
+
+.tone-187::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-188 {
+  background: linear-gradient(135deg, hsl(254 82% 88%), hsl(294 76% 84%), hsl(428 62% 86%));
+}
+
+.tone-188::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-189 {
+  background: linear-gradient(135deg, hsl(261 82% 88%), hsl(303 76% 84%), hsl(439 62% 86%));
+}
+
+.tone-189::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-190 {
+  background: linear-gradient(135deg, hsl(268 82% 88%), hsl(312 76% 84%), hsl(450 62% 86%));
+}
+
+.tone-190::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-191 {
+  background: linear-gradient(135deg, hsl(275 82% 88%), hsl(321 76% 84%), hsl(461 62% 86%));
+}
+
+.tone-191::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-192 {
+  background: linear-gradient(135deg, hsl(282 82% 88%), hsl(330 76% 84%), hsl(472 62% 86%));
+}
+
+.tone-192::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-193 {
+  background: linear-gradient(135deg, hsl(289 82% 88%), hsl(339 76% 84%), hsl(483 62% 86%));
+}
+
+.tone-193::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-194 {
+  background: linear-gradient(135deg, hsl(296 82% 88%), hsl(348 76% 84%), hsl(494 62% 86%));
+}
+
+.tone-194::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-195 {
+  background: linear-gradient(135deg, hsl(303 82% 88%), hsl(357 76% 84%), hsl(505 62% 86%));
+}
+
+.tone-195::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-196 {
+  background: linear-gradient(135deg, hsl(310 82% 88%), hsl(366 76% 84%), hsl(516 62% 86%));
+}
+
+.tone-196::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-197 {
+  background: linear-gradient(135deg, hsl(317 82% 88%), hsl(375 76% 84%), hsl(167 62% 86%));
+}
+
+.tone-197::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-198 {
+  background: linear-gradient(135deg, hsl(324 82% 88%), hsl(384 76% 84%), hsl(178 62% 86%));
+}
+
+.tone-198::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-199 {
+  background: linear-gradient(135deg, hsl(331 82% 88%), hsl(393 76% 84%), hsl(189 62% 86%));
+}
+
+.tone-199::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-200 {
+  background: linear-gradient(135deg, hsl(338 82% 88%), hsl(42 76% 84%), hsl(200 62% 86%));
+}
+
+.tone-200::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-201 {
+  background: linear-gradient(135deg, hsl(345 82% 88%), hsl(51 76% 84%), hsl(211 62% 86%));
+}
+
+.tone-201::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-202 {
+  background: linear-gradient(135deg, hsl(352 82% 88%), hsl(60 76% 84%), hsl(222 62% 86%));
+}
+
+.tone-202::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-203 {
+  background: linear-gradient(135deg, hsl(359 82% 88%), hsl(69 76% 84%), hsl(233 62% 86%));
+}
+
+.tone-203::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-204 {
+  background: linear-gradient(135deg, hsl(366 82% 88%), hsl(78 76% 84%), hsl(244 62% 86%));
+}
+
+.tone-204::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-205 {
+  background: linear-gradient(135deg, hsl(373 82% 88%), hsl(87 76% 84%), hsl(255 62% 86%));
+}
+
+.tone-205::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-206 {
+  background: linear-gradient(135deg, hsl(20 82% 88%), hsl(96 76% 84%), hsl(266 62% 86%));
+}
+
+.tone-206::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-207 {
+  background: linear-gradient(135deg, hsl(27 82% 88%), hsl(105 76% 84%), hsl(277 62% 86%));
+}
+
+.tone-207::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-208 {
+  background: linear-gradient(135deg, hsl(34 82% 88%), hsl(114 76% 84%), hsl(288 62% 86%));
+}
+
+.tone-208::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-209 {
+  background: linear-gradient(135deg, hsl(41 82% 88%), hsl(123 76% 84%), hsl(299 62% 86%));
+}
+
+.tone-209::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-210 {
+  background: linear-gradient(135deg, hsl(48 82% 88%), hsl(132 76% 84%), hsl(310 62% 86%));
+}
+
+.tone-210::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-211 {
+  background: linear-gradient(135deg, hsl(55 82% 88%), hsl(141 76% 84%), hsl(321 62% 86%));
+}
+
+.tone-211::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-212 {
+  background: linear-gradient(135deg, hsl(62 82% 88%), hsl(150 76% 84%), hsl(332 62% 86%));
+}
+
+.tone-212::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-213 {
+  background: linear-gradient(135deg, hsl(69 82% 88%), hsl(159 76% 84%), hsl(343 62% 86%));
+}
+
+.tone-213::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-214 {
+  background: linear-gradient(135deg, hsl(76 82% 88%), hsl(168 76% 84%), hsl(354 62% 86%));
+}
+
+.tone-214::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-215 {
+  background: linear-gradient(135deg, hsl(83 82% 88%), hsl(177 76% 84%), hsl(365 62% 86%));
+}
+
+.tone-215::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-216 {
+  background: linear-gradient(135deg, hsl(90 82% 88%), hsl(186 76% 84%), hsl(376 62% 86%));
+}
+
+.tone-216::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-217 {
+  background: linear-gradient(135deg, hsl(97 82% 88%), hsl(195 76% 84%), hsl(387 62% 86%));
+}
+
+.tone-217::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-218 {
+  background: linear-gradient(135deg, hsl(104 82% 88%), hsl(204 76% 84%), hsl(398 62% 86%));
+}
+
+.tone-218::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-219 {
+  background: linear-gradient(135deg, hsl(111 82% 88%), hsl(213 76% 84%), hsl(409 62% 86%));
+}
+
+.tone-219::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-220 {
+  background: linear-gradient(135deg, hsl(118 82% 88%), hsl(222 76% 84%), hsl(420 62% 86%));
+}
+
+.tone-220::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-221 {
+  background: linear-gradient(135deg, hsl(125 82% 88%), hsl(231 76% 84%), hsl(431 62% 86%));
+}
+
+.tone-221::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-222 {
+  background: linear-gradient(135deg, hsl(132 82% 88%), hsl(240 76% 84%), hsl(442 62% 86%));
+}
+
+.tone-222::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-223 {
+  background: linear-gradient(135deg, hsl(139 82% 88%), hsl(249 76% 84%), hsl(453 62% 86%));
+}
+
+.tone-223::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-224 {
+  background: linear-gradient(135deg, hsl(146 82% 88%), hsl(258 76% 84%), hsl(464 62% 86%));
+}
+
+.tone-224::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-225 {
+  background: linear-gradient(135deg, hsl(153 82% 88%), hsl(267 76% 84%), hsl(475 62% 86%));
+}
+
+.tone-225::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-226 {
+  background: linear-gradient(135deg, hsl(160 82% 88%), hsl(276 76% 84%), hsl(486 62% 86%));
+}
+
+.tone-226::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-227 {
+  background: linear-gradient(135deg, hsl(167 82% 88%), hsl(285 76% 84%), hsl(497 62% 86%));
+}
+
+.tone-227::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-228 {
+  background: linear-gradient(135deg, hsl(174 82% 88%), hsl(294 76% 84%), hsl(508 62% 86%));
+}
+
+.tone-228::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-229 {
+  background: linear-gradient(135deg, hsl(181 82% 88%), hsl(303 76% 84%), hsl(519 62% 86%));
+}
+
+.tone-229::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-230 {
+  background: linear-gradient(135deg, hsl(188 82% 88%), hsl(312 76% 84%), hsl(170 62% 86%));
+}
+
+.tone-230::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-231 {
+  background: linear-gradient(135deg, hsl(195 82% 88%), hsl(321 76% 84%), hsl(181 62% 86%));
+}
+
+.tone-231::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-232 {
+  background: linear-gradient(135deg, hsl(202 82% 88%), hsl(330 76% 84%), hsl(192 62% 86%));
+}
+
+.tone-232::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-233 {
+  background: linear-gradient(135deg, hsl(209 82% 88%), hsl(339 76% 84%), hsl(203 62% 86%));
+}
+
+.tone-233::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-234 {
+  background: linear-gradient(135deg, hsl(216 82% 88%), hsl(348 76% 84%), hsl(214 62% 86%));
+}
+
+.tone-234::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-235 {
+  background: linear-gradient(135deg, hsl(223 82% 88%), hsl(357 76% 84%), hsl(225 62% 86%));
+}
+
+.tone-235::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-236 {
+  background: linear-gradient(135deg, hsl(230 82% 88%), hsl(366 76% 84%), hsl(236 62% 86%));
+}
+
+.tone-236::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-237 {
+  background: linear-gradient(135deg, hsl(237 82% 88%), hsl(375 76% 84%), hsl(247 62% 86%));
+}
+
+.tone-237::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-238 {
+  background: linear-gradient(135deg, hsl(244 82% 88%), hsl(384 76% 84%), hsl(258 62% 86%));
+}
+
+.tone-238::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-239 {
+  background: linear-gradient(135deg, hsl(251 82% 88%), hsl(393 76% 84%), hsl(269 62% 86%));
+}
+
+.tone-239::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-240 {
+  background: linear-gradient(135deg, hsl(258 82% 88%), hsl(42 76% 84%), hsl(280 62% 86%));
+}
+
+.tone-240::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-241 {
+  background: linear-gradient(135deg, hsl(265 82% 88%), hsl(51 76% 84%), hsl(291 62% 86%));
+}
+
+.tone-241::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-242 {
+  background: linear-gradient(135deg, hsl(272 82% 88%), hsl(60 76% 84%), hsl(302 62% 86%));
+}
+
+.tone-242::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-243 {
+  background: linear-gradient(135deg, hsl(279 82% 88%), hsl(69 76% 84%), hsl(313 62% 86%));
+}
+
+.tone-243::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-244 {
+  background: linear-gradient(135deg, hsl(286 82% 88%), hsl(78 76% 84%), hsl(324 62% 86%));
+}
+
+.tone-244::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-245 {
+  background: linear-gradient(135deg, hsl(293 82% 88%), hsl(87 76% 84%), hsl(335 62% 86%));
+}
+
+.tone-245::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-246 {
+  background: linear-gradient(135deg, hsl(300 82% 88%), hsl(96 76% 84%), hsl(346 62% 86%));
+}
+
+.tone-246::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-247 {
+  background: linear-gradient(135deg, hsl(307 82% 88%), hsl(105 76% 84%), hsl(357 62% 86%));
+}
+
+.tone-247::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-248 {
+  background: linear-gradient(135deg, hsl(314 82% 88%), hsl(114 76% 84%), hsl(368 62% 86%));
+}
+
+.tone-248::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-249 {
+  background: linear-gradient(135deg, hsl(321 82% 88%), hsl(123 76% 84%), hsl(379 62% 86%));
+}
+
+.tone-249::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-250 {
+  background: linear-gradient(135deg, hsl(328 82% 88%), hsl(132 76% 84%), hsl(390 62% 86%));
+}
+
+.tone-250::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-251 {
+  background: linear-gradient(135deg, hsl(335 82% 88%), hsl(141 76% 84%), hsl(401 62% 86%));
+}
+
+.tone-251::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-252 {
+  background: linear-gradient(135deg, hsl(342 82% 88%), hsl(150 76% 84%), hsl(412 62% 86%));
+}
+
+.tone-252::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-253 {
+  background: linear-gradient(135deg, hsl(349 82% 88%), hsl(159 76% 84%), hsl(423 62% 86%));
+}
+
+.tone-253::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-254 {
+  background: linear-gradient(135deg, hsl(356 82% 88%), hsl(168 76% 84%), hsl(434 62% 86%));
+}
+
+.tone-254::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-255 {
+  background: linear-gradient(135deg, hsl(363 82% 88%), hsl(177 76% 84%), hsl(445 62% 86%));
+}
+
+.tone-255::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-256 {
+  background: linear-gradient(135deg, hsl(370 82% 88%), hsl(186 76% 84%), hsl(456 62% 86%));
+}
+
+.tone-256::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-257 {
+  background: linear-gradient(135deg, hsl(377 82% 88%), hsl(195 76% 84%), hsl(467 62% 86%));
+}
+
+.tone-257::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-258 {
+  background: linear-gradient(135deg, hsl(24 82% 88%), hsl(204 76% 84%), hsl(478 62% 86%));
+}
+
+.tone-258::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-259 {
+  background: linear-gradient(135deg, hsl(31 82% 88%), hsl(213 76% 84%), hsl(489 62% 86%));
+}
+
+.tone-259::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-260 {
+  background: linear-gradient(135deg, hsl(38 82% 88%), hsl(222 76% 84%), hsl(500 62% 86%));
+}
+
+.tone-260::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-261 {
+  background: linear-gradient(135deg, hsl(45 82% 88%), hsl(231 76% 84%), hsl(511 62% 86%));
+}
+
+.tone-261::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-262 {
+  background: linear-gradient(135deg, hsl(52 82% 88%), hsl(240 76% 84%), hsl(162 62% 86%));
+}
+
+.tone-262::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-263 {
+  background: linear-gradient(135deg, hsl(59 82% 88%), hsl(249 76% 84%), hsl(173 62% 86%));
+}
+
+.tone-263::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-264 {
+  background: linear-gradient(135deg, hsl(66 82% 88%), hsl(258 76% 84%), hsl(184 62% 86%));
+}
+
+.tone-264::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-265 {
+  background: linear-gradient(135deg, hsl(73 82% 88%), hsl(267 76% 84%), hsl(195 62% 86%));
+}
+
+.tone-265::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-266 {
+  background: linear-gradient(135deg, hsl(80 82% 88%), hsl(276 76% 84%), hsl(206 62% 86%));
+}
+
+.tone-266::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-267 {
+  background: linear-gradient(135deg, hsl(87 82% 88%), hsl(285 76% 84%), hsl(217 62% 86%));
+}
+
+.tone-267::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-268 {
+  background: linear-gradient(135deg, hsl(94 82% 88%), hsl(294 76% 84%), hsl(228 62% 86%));
+}
+
+.tone-268::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-269 {
+  background: linear-gradient(135deg, hsl(101 82% 88%), hsl(303 76% 84%), hsl(239 62% 86%));
+}
+
+.tone-269::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-270 {
+  background: linear-gradient(135deg, hsl(108 82% 88%), hsl(312 76% 84%), hsl(250 62% 86%));
+}
+
+.tone-270::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-271 {
+  background: linear-gradient(135deg, hsl(115 82% 88%), hsl(321 76% 84%), hsl(261 62% 86%));
+}
+
+.tone-271::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-272 {
+  background: linear-gradient(135deg, hsl(122 82% 88%), hsl(330 76% 84%), hsl(272 62% 86%));
+}
+
+.tone-272::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-273 {
+  background: linear-gradient(135deg, hsl(129 82% 88%), hsl(339 76% 84%), hsl(283 62% 86%));
+}
+
+.tone-273::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-274 {
+  background: linear-gradient(135deg, hsl(136 82% 88%), hsl(348 76% 84%), hsl(294 62% 86%));
+}
+
+.tone-274::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-275 {
+  background: linear-gradient(135deg, hsl(143 82% 88%), hsl(357 76% 84%), hsl(305 62% 86%));
+}
+
+.tone-275::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-276 {
+  background: linear-gradient(135deg, hsl(150 82% 88%), hsl(366 76% 84%), hsl(316 62% 86%));
+}
+
+.tone-276::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-277 {
+  background: linear-gradient(135deg, hsl(157 82% 88%), hsl(375 76% 84%), hsl(327 62% 86%));
+}
+
+.tone-277::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-278 {
+  background: linear-gradient(135deg, hsl(164 82% 88%), hsl(384 76% 84%), hsl(338 62% 86%));
+}
+
+.tone-278::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-279 {
+  background: linear-gradient(135deg, hsl(171 82% 88%), hsl(393 76% 84%), hsl(349 62% 86%));
+}
+
+.tone-279::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-280 {
+  background: linear-gradient(135deg, hsl(178 82% 88%), hsl(42 76% 84%), hsl(360 62% 86%));
+}
+
+.tone-280::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-281 {
+  background: linear-gradient(135deg, hsl(185 82% 88%), hsl(51 76% 84%), hsl(371 62% 86%));
+}
+
+.tone-281::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-282 {
+  background: linear-gradient(135deg, hsl(192 82% 88%), hsl(60 76% 84%), hsl(382 62% 86%));
+}
+
+.tone-282::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-283 {
+  background: linear-gradient(135deg, hsl(199 82% 88%), hsl(69 76% 84%), hsl(393 62% 86%));
+}
+
+.tone-283::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-284 {
+  background: linear-gradient(135deg, hsl(206 82% 88%), hsl(78 76% 84%), hsl(404 62% 86%));
+}
+
+.tone-284::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-285 {
+  background: linear-gradient(135deg, hsl(213 82% 88%), hsl(87 76% 84%), hsl(415 62% 86%));
+}
+
+.tone-285::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-286 {
+  background: linear-gradient(135deg, hsl(220 82% 88%), hsl(96 76% 84%), hsl(426 62% 86%));
+}
+
+.tone-286::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-287 {
+  background: linear-gradient(135deg, hsl(227 82% 88%), hsl(105 76% 84%), hsl(437 62% 86%));
+}
+
+.tone-287::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-288 {
+  background: linear-gradient(135deg, hsl(234 82% 88%), hsl(114 76% 84%), hsl(448 62% 86%));
+}
+
+.tone-288::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-289 {
+  background: linear-gradient(135deg, hsl(241 82% 88%), hsl(123 76% 84%), hsl(459 62% 86%));
+}
+
+.tone-289::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-290 {
+  background: linear-gradient(135deg, hsl(248 82% 88%), hsl(132 76% 84%), hsl(470 62% 86%));
+}
+
+.tone-290::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-291 {
+  background: linear-gradient(135deg, hsl(255 82% 88%), hsl(141 76% 84%), hsl(481 62% 86%));
+}
+
+.tone-291::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-292 {
+  background: linear-gradient(135deg, hsl(262 82% 88%), hsl(150 76% 84%), hsl(492 62% 86%));
+}
+
+.tone-292::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-293 {
+  background: linear-gradient(135deg, hsl(269 82% 88%), hsl(159 76% 84%), hsl(503 62% 86%));
+}
+
+.tone-293::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-294 {
+  background: linear-gradient(135deg, hsl(276 82% 88%), hsl(168 76% 84%), hsl(514 62% 86%));
+}
+
+.tone-294::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-295 {
+  background: linear-gradient(135deg, hsl(283 82% 88%), hsl(177 76% 84%), hsl(165 62% 86%));
+}
+
+.tone-295::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-296 {
+  background: linear-gradient(135deg, hsl(290 82% 88%), hsl(186 76% 84%), hsl(176 62% 86%));
+}
+
+.tone-296::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-297 {
+  background: linear-gradient(135deg, hsl(297 82% 88%), hsl(195 76% 84%), hsl(187 62% 86%));
+}
+
+.tone-297::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-298 {
+  background: linear-gradient(135deg, hsl(304 82% 88%), hsl(204 76% 84%), hsl(198 62% 86%));
+}
+
+.tone-298::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-299 {
+  background: linear-gradient(135deg, hsl(311 82% 88%), hsl(213 76% 84%), hsl(209 62% 86%));
+}
+
+.tone-299::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-300 {
+  background: linear-gradient(135deg, hsl(318 82% 88%), hsl(222 76% 84%), hsl(220 62% 86%));
+}
+
+.tone-300::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-301 {
+  background: linear-gradient(135deg, hsl(325 82% 88%), hsl(231 76% 84%), hsl(231 62% 86%));
+}
+
+.tone-301::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-302 {
+  background: linear-gradient(135deg, hsl(332 82% 88%), hsl(240 76% 84%), hsl(242 62% 86%));
+}
+
+.tone-302::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-303 {
+  background: linear-gradient(135deg, hsl(339 82% 88%), hsl(249 76% 84%), hsl(253 62% 86%));
+}
+
+.tone-303::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-304 {
+  background: linear-gradient(135deg, hsl(346 82% 88%), hsl(258 76% 84%), hsl(264 62% 86%));
+}
+
+.tone-304::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-305 {
+  background: linear-gradient(135deg, hsl(353 82% 88%), hsl(267 76% 84%), hsl(275 62% 86%));
+}
+
+.tone-305::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-306 {
+  background: linear-gradient(135deg, hsl(360 82% 88%), hsl(276 76% 84%), hsl(286 62% 86%));
+}
+
+.tone-306::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-307 {
+  background: linear-gradient(135deg, hsl(367 82% 88%), hsl(285 76% 84%), hsl(297 62% 86%));
+}
+
+.tone-307::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-308 {
+  background: linear-gradient(135deg, hsl(374 82% 88%), hsl(294 76% 84%), hsl(308 62% 86%));
+}
+
+.tone-308::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-309 {
+  background: linear-gradient(135deg, hsl(21 82% 88%), hsl(303 76% 84%), hsl(319 62% 86%));
+}
+
+.tone-309::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-310 {
+  background: linear-gradient(135deg, hsl(28 82% 88%), hsl(312 76% 84%), hsl(330 62% 86%));
+}
+
+.tone-310::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-311 {
+  background: linear-gradient(135deg, hsl(35 82% 88%), hsl(321 76% 84%), hsl(341 62% 86%));
+}
+
+.tone-311::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-312 {
+  background: linear-gradient(135deg, hsl(42 82% 88%), hsl(330 76% 84%), hsl(352 62% 86%));
+}
+
+.tone-312::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-313 {
+  background: linear-gradient(135deg, hsl(49 82% 88%), hsl(339 76% 84%), hsl(363 62% 86%));
+}
+
+.tone-313::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-314 {
+  background: linear-gradient(135deg, hsl(56 82% 88%), hsl(348 76% 84%), hsl(374 62% 86%));
+}
+
+.tone-314::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-315 {
+  background: linear-gradient(135deg, hsl(63 82% 88%), hsl(357 76% 84%), hsl(385 62% 86%));
+}
+
+.tone-315::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-316 {
+  background: linear-gradient(135deg, hsl(70 82% 88%), hsl(366 76% 84%), hsl(396 62% 86%));
+}
+
+.tone-316::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-317 {
+  background: linear-gradient(135deg, hsl(77 82% 88%), hsl(375 76% 84%), hsl(407 62% 86%));
+}
+
+.tone-317::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-318 {
+  background: linear-gradient(135deg, hsl(84 82% 88%), hsl(384 76% 84%), hsl(418 62% 86%));
+}
+
+.tone-318::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-319 {
+  background: linear-gradient(135deg, hsl(91 82% 88%), hsl(393 76% 84%), hsl(429 62% 86%));
+}
+
+.tone-319::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-320 {
+  background: linear-gradient(135deg, hsl(98 82% 88%), hsl(42 76% 84%), hsl(440 62% 86%));
+}
+
+.tone-320::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-321 {
+  background: linear-gradient(135deg, hsl(105 82% 88%), hsl(51 76% 84%), hsl(451 62% 86%));
+}
+
+.tone-321::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(51, 80%, 96%, 0.88), hsla(51, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-322 {
+  background: linear-gradient(135deg, hsl(112 82% 88%), hsl(60 76% 84%), hsl(462 62% 86%));
+}
+
+.tone-322::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(60, 80%, 96%, 0.88), hsla(60, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-323 {
+  background: linear-gradient(135deg, hsl(119 82% 88%), hsl(69 76% 84%), hsl(473 62% 86%));
+}
+
+.tone-323::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(69, 80%, 96%, 0.88), hsla(69, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-324 {
+  background: linear-gradient(135deg, hsl(126 82% 88%), hsl(78 76% 84%), hsl(484 62% 86%));
+}
+
+.tone-324::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(78, 80%, 96%, 0.88), hsla(78, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-325 {
+  background: linear-gradient(135deg, hsl(133 82% 88%), hsl(87 76% 84%), hsl(495 62% 86%));
+}
+
+.tone-325::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(87, 80%, 96%, 0.88), hsla(87, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-326 {
+  background: linear-gradient(135deg, hsl(140 82% 88%), hsl(96 76% 84%), hsl(506 62% 86%));
+}
+
+.tone-326::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(96, 80%, 96%, 0.88), hsla(96, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-327 {
+  background: linear-gradient(135deg, hsl(147 82% 88%), hsl(105 76% 84%), hsl(517 62% 86%));
+}
+
+.tone-327::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(105, 80%, 96%, 0.88), hsla(105, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-328 {
+  background: linear-gradient(135deg, hsl(154 82% 88%), hsl(114 76% 84%), hsl(168 62% 86%));
+}
+
+.tone-328::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(114, 80%, 96%, 0.88), hsla(114, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-329 {
+  background: linear-gradient(135deg, hsl(161 82% 88%), hsl(123 76% 84%), hsl(179 62% 86%));
+}
+
+.tone-329::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(123, 80%, 96%, 0.88), hsla(123, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-330 {
+  background: linear-gradient(135deg, hsl(168 82% 88%), hsl(132 76% 84%), hsl(190 62% 86%));
+}
+
+.tone-330::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(132, 80%, 96%, 0.88), hsla(132, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-331 {
+  background: linear-gradient(135deg, hsl(175 82% 88%), hsl(141 76% 84%), hsl(201 62% 86%));
+}
+
+.tone-331::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(141, 80%, 96%, 0.88), hsla(141, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-332 {
+  background: linear-gradient(135deg, hsl(182 82% 88%), hsl(150 76% 84%), hsl(212 62% 86%));
+}
+
+.tone-332::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(150, 80%, 96%, 0.88), hsla(150, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-333 {
+  background: linear-gradient(135deg, hsl(189 82% 88%), hsl(159 76% 84%), hsl(223 62% 86%));
+}
+
+.tone-333::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(159, 80%, 96%, 0.88), hsla(159, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-334 {
+  background: linear-gradient(135deg, hsl(196 82% 88%), hsl(168 76% 84%), hsl(234 62% 86%));
+}
+
+.tone-334::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(168, 80%, 96%, 0.88), hsla(168, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-335 {
+  background: linear-gradient(135deg, hsl(203 82% 88%), hsl(177 76% 84%), hsl(245 62% 86%));
+}
+
+.tone-335::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(177, 80%, 96%, 0.88), hsla(177, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-336 {
+  background: linear-gradient(135deg, hsl(210 82% 88%), hsl(186 76% 84%), hsl(256 62% 86%));
+}
+
+.tone-336::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(186, 80%, 96%, 0.88), hsla(186, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-337 {
+  background: linear-gradient(135deg, hsl(217 82% 88%), hsl(195 76% 84%), hsl(267 62% 86%));
+}
+
+.tone-337::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(195, 80%, 96%, 0.88), hsla(195, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-338 {
+  background: linear-gradient(135deg, hsl(224 82% 88%), hsl(204 76% 84%), hsl(278 62% 86%));
+}
+
+.tone-338::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(204, 80%, 96%, 0.88), hsla(204, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-339 {
+  background: linear-gradient(135deg, hsl(231 82% 88%), hsl(213 76% 84%), hsl(289 62% 86%));
+}
+
+.tone-339::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(213, 80%, 96%, 0.88), hsla(213, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-340 {
+  background: linear-gradient(135deg, hsl(238 82% 88%), hsl(222 76% 84%), hsl(300 62% 86%));
+}
+
+.tone-340::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(222, 80%, 96%, 0.88), hsla(222, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-341 {
+  background: linear-gradient(135deg, hsl(245 82% 88%), hsl(231 76% 84%), hsl(311 62% 86%));
+}
+
+.tone-341::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(231, 80%, 96%, 0.88), hsla(231, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-342 {
+  background: linear-gradient(135deg, hsl(252 82% 88%), hsl(240 76% 84%), hsl(322 62% 86%));
+}
+
+.tone-342::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(240, 80%, 96%, 0.88), hsla(240, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-343 {
+  background: linear-gradient(135deg, hsl(259 82% 88%), hsl(249 76% 84%), hsl(333 62% 86%));
+}
+
+.tone-343::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(249, 80%, 96%, 0.88), hsla(249, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-344 {
+  background: linear-gradient(135deg, hsl(266 82% 88%), hsl(258 76% 84%), hsl(344 62% 86%));
+}
+
+.tone-344::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(258, 80%, 96%, 0.88), hsla(258, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-345 {
+  background: linear-gradient(135deg, hsl(273 82% 88%), hsl(267 76% 84%), hsl(355 62% 86%));
+}
+
+.tone-345::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(267, 80%, 96%, 0.88), hsla(267, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-346 {
+  background: linear-gradient(135deg, hsl(280 82% 88%), hsl(276 76% 84%), hsl(366 62% 86%));
+}
+
+.tone-346::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(276, 80%, 96%, 0.88), hsla(276, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-347 {
+  background: linear-gradient(135deg, hsl(287 82% 88%), hsl(285 76% 84%), hsl(377 62% 86%));
+}
+
+.tone-347::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(285, 80%, 96%, 0.88), hsla(285, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-348 {
+  background: linear-gradient(135deg, hsl(294 82% 88%), hsl(294 76% 84%), hsl(388 62% 86%));
+}
+
+.tone-348::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(294, 80%, 96%, 0.88), hsla(294, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-349 {
+  background: linear-gradient(135deg, hsl(301 82% 88%), hsl(303 76% 84%), hsl(399 62% 86%));
+}
+
+.tone-349::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(303, 80%, 96%, 0.88), hsla(303, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-350 {
+  background: linear-gradient(135deg, hsl(308 82% 88%), hsl(312 76% 84%), hsl(410 62% 86%));
+}
+
+.tone-350::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(312, 80%, 96%, 0.88), hsla(312, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-351 {
+  background: linear-gradient(135deg, hsl(315 82% 88%), hsl(321 76% 84%), hsl(421 62% 86%));
+}
+
+.tone-351::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(321, 80%, 96%, 0.88), hsla(321, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-352 {
+  background: linear-gradient(135deg, hsl(322 82% 88%), hsl(330 76% 84%), hsl(432 62% 86%));
+}
+
+.tone-352::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(330, 80%, 96%, 0.88), hsla(330, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-353 {
+  background: linear-gradient(135deg, hsl(329 82% 88%), hsl(339 76% 84%), hsl(443 62% 86%));
+}
+
+.tone-353::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(339, 80%, 96%, 0.88), hsla(339, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-354 {
+  background: linear-gradient(135deg, hsl(336 82% 88%), hsl(348 76% 84%), hsl(454 62% 86%));
+}
+
+.tone-354::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(348, 80%, 96%, 0.88), hsla(348, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-355 {
+  background: linear-gradient(135deg, hsl(343 82% 88%), hsl(357 76% 84%), hsl(465 62% 86%));
+}
+
+.tone-355::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(357, 80%, 96%, 0.88), hsla(357, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-356 {
+  background: linear-gradient(135deg, hsl(350 82% 88%), hsl(366 76% 84%), hsl(476 62% 86%));
+}
+
+.tone-356::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(366, 80%, 96%, 0.88), hsla(366, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-357 {
+  background: linear-gradient(135deg, hsl(357 82% 88%), hsl(375 76% 84%), hsl(487 62% 86%));
+}
+
+.tone-357::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(375, 80%, 96%, 0.88), hsla(375, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-358 {
+  background: linear-gradient(135deg, hsl(364 82% 88%), hsl(384 76% 84%), hsl(498 62% 86%));
+}
+
+.tone-358::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(384, 80%, 96%, 0.88), hsla(384, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-359 {
+  background: linear-gradient(135deg, hsl(371 82% 88%), hsl(393 76% 84%), hsl(509 62% 86%));
+}
+
+.tone-359::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(393, 80%, 96%, 0.88), hsla(393, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+.tone-360 {
+  background: linear-gradient(135deg, hsl(18 82% 88%), hsl(42 76% 84%), hsl(160 62% 86%));
+}
+
+.tone-360::after {
+  content: '';
+  position: absolute;
+  inset: auto -12% -48% auto;
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsla(42, 80%, 96%, 0.88), hsla(42, 80%, 96%, 0));
+  pointer-events: none;
+}
+
+
