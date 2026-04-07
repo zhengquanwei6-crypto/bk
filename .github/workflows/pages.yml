@@ -36,8 +36,8 @@ jobs:
 
       - name: Build
         env:
-          VITE_DISCUZ_URL: ${{ vars.VITE_DISCUZ_URL }}
-          VITE_DISCUZ_CATEGORY_ID: ${{ vars.VITE_DISCUZ_CATEGORY_ID }}
+          VITE_DISCUZ_URL: ${{ vars.VITE_DISCUZ_URL || 'https://birthday-junior-tied-obtained.trycloudflare.com' }}
+          VITE_DISCUZ_CATEGORY_ID: ${{ vars.VITE_DISCUZ_CATEGORY_ID || '1' }}
         run: npm run build
 
       - name: Upload artifact

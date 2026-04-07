@@ -1,13 +1,19 @@
-param(
+﻿param(
   [string]$ContainerName = "discuzq",
-  [string]$DataDir = "D:\\book\\discuz-data",
+  [string]$DataDir = "D:\book\discuz-data",
   [int]$Port = 8080
 )
 
 $ErrorActionPreference = "Stop"
 
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  throw "Docker 未安装或不可用。请先安装并启动 Docker Desktop。"
+$dockerBin = "C:\Program Files\Docker\Docker\resources\bin"
+$dockerExe = Join-Path $dockerBin "docker.exe"
+if (-not (Test-Path $dockerExe)) {
+  throw "Docker CLI not found. Please start Docker Desktop first."
+}
+
+if ($env:PATH -notlike "*$dockerBin*") {
+  $env:PATH = "$dockerBin;$env:PATH"
 }
 
 if (-not (Test-Path $DataDir)) {
@@ -25,20 +31,22 @@ if (-not (Test-Path $mysqlDir)) {
   New-Item -ItemType Directory -Path $mysqlDir | Out-Null
 }
 
-$exists = docker ps -a --format "{{.Names}}" | Select-String -Pattern "^$ContainerName$" -SimpleMatch
+$names = & $dockerExe ps -a --format "{{.Names}}"
+$exists = $names | Where-Object { $_ -eq $ContainerName }
+
 if ($exists) {
-  Write-Host "检测到已存在容器 $ContainerName，正在启动..."
-  docker start $ContainerName | Out-Null
+  Write-Host "Container $ContainerName exists, starting..."
+  & $dockerExe start $ContainerName | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Failed to start container $ContainerName" }
 } else {
-  Write-Host "正在拉取 DiscuzQ 镜像并创建容器..."
-  docker run -d --restart=always `
+  Write-Host "Creating DiscuzQ container..."
+  & $dockerExe run -d --restart=always `
     --name $ContainerName `
     -p "${Port}:80" `
     -v "${discuzDir}:/var/lib/discuz" `
     -v "${mysqlDir}:/var/lib/mysqldb" `
     ccr.ccs.tencentyun.com/discuzq/dzq:latest | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Failed to create DiscuzQ container" }
 }
 
-Write-Host ""
-Write-Host "DiscuzQ 已启动。请在浏览器打开安装页："
-Write-Host "http://localhost:${Port}/install"
+Write-Host "DiscuzQ started. Open: http://localhost:${Port}/install"
