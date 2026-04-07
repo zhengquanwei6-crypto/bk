@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply font-sans leading-relaxed text-gray-800 bg-surface-50;
+  }
+  ::selection {
+    @apply bg-primary-600 text-white;
+  }
+}
+
+@layer components {
+  /* === 按钮系统 === */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium
+           rounded-xl transition-all duration-300 ease-out cursor-pointer
+           active:scale-[0.97];
+  }
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 text-white
+           shadow-md shadow-primary-500/20
+           hover:shadow-lg hover:shadow-primary-500/30 hover:from-primary-700 hover:to-primary-600
+           hover:-translate-y-0.5;
+  }
+  .btn-ghost {
+    @apply bg-white text-gray-700 border border-gray-200
+           shadow-soft hover:shadow-soft-lg hover:border-primary-200 hover:text-primary-600
+           hover:-translate-y-0.5;
+  }
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-600 to-red-500 text-white rounded-xl
+           shadow-md shadow-red-500/20 hover:shadow-lg hover:shadow-red-500/30;
+  }
+  .btn-sm {
+    @apply text-xs px-4 py-2 rounded-lg;
+  }
+
+  /* === 输入框 === */
+  .input {
+    @apply w-full px-4 py-3 bg-white border border-gray-200 text-gray-800
+           rounded-xl placeholder-gray-400
+           transition-all duration-200
+           focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100
+           hover:border-gray-300;
+  }
+
+  /* === 卡片 === */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-100 shadow-soft
+           transition-all duration-300 overflow-hidden;
+  }
+  .card-hover {
+    @apply hover:shadow-soft-lg hover:-translate-y-1 hover:border-gray-200;
+  }
+
+  /* === 徽章 === */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 text-[11px] font-medium rounded-full;
+  }
+  .badge-primary {
+    @apply bg-primary-50 text-primary-600 border border-primary-100;
+  }
+  .badge-gray {
+    @apply bg-gray-100 text-gray-600;
+  }
+
+  /* === 玻璃效果 === */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20;
+  }
+}
+
+/* === Markdown 编辑器 === */
+.md-editor {
+  @apply font-mono text-sm leading-relaxed resize-y;
+  tab-size: 2;
+}
+
+/* === 骨架屏 === */
+.skeleton {
+  @apply bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded-lg;
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* === 页面进入动画 === */
+.page-enter {
+  animation: pageEnter 0.4s ease-out;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === 渐变文字 === */
+.text-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === 装饰性网格背景 === */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* === 装饰性光晕 === */
+.glow-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* === 滚动条美化 === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
