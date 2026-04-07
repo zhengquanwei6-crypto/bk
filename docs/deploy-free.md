@@ -37,6 +37,9 @@ Then open:
 
 Complete the DiscuzQ install wizard.
 
+Note:
+- The startup script now auto-patches DiscuzQ admin page CDN dependencies to avoid "admin loading forever" when `dl.discuz.chat` is unreachable.
+
 ## Expose DiscuzQ to Internet (Free)
 
 ```powershell

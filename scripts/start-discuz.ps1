@@ -49,4 +49,19 @@ if ($exists) {
   if ($LASTEXITCODE -ne 0) { throw "Failed to create DiscuzQ container" }
 }
 
+Write-Host "Applying admin CDN compatibility patch..."
+$patchScript = @'
+set -e
+ADMIN_HTML="/var/www/discuz/public/admin.html"
+if [ -f "$ADMIN_HTML" ]; then
+  cp "$ADMIN_HTML" "${ADMIN_HTML}.bak" 2>/dev/null || true
+  sed -i 's#https://dl.discuz.chat/lib/vue@2.6.11.min.js#https://unpkg.com/vue@2.6.11/dist/vue.min.js#g' "$ADMIN_HTML"
+  sed -i 's#https://dl.discuz.chat/lib/vuex@3.2.0.min.js#https://cdn.jsdelivr.net/npm/vuex@3.2.0/dist/vuex.min.js#g' "$ADMIN_HTML"
+  sed -i 's#<script src=https://dl.discuz.chat/dzq/admin.js></script>##g' "$ADMIN_HTML"
+  sed -i 's#<script type=text/javascript src=//cloud.discuz.chat/latest.js></script>##g' "$ADMIN_HTML"
+fi
+'@
+& $dockerExe exec $ContainerName sh -lc $patchScript | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "Failed to patch DiscuzQ admin page in container" }
+
 Write-Host "DiscuzQ started. Open: http://localhost:${Port}/install"
