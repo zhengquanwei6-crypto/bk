@@ -36,7 +36,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_DISCUZ_URL: ${{ vars.VITE_DISCUZ_URL || 'https://birthday-junior-tied-obtained.trycloudflare.com' }}
+          VITE_DISCUZ_URL: ${{ vars.VITE_DISCUZ_URL || 'https://criticism-shopzilla-jpg-cruise.trycloudflare.com' }}
           VITE_DISCUZ_CATEGORY_ID: ${{ vars.VITE_DISCUZ_CATEGORY_ID || '1' }}
         run: npm run build
 
