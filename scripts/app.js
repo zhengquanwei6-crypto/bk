@@ -18,10 +18,11 @@ const applyTemplate = (text) =>
     .replaceAll("{{SENDER}}", TEMPLATE.senderName)
     .replaceAll("{{RECIPIENT}}", TEMPLATE.recipientName)
     .replaceAll("{{RELATION}}", TEMPLATE.relationLabel);
+const isMobileViewport = window.matchMedia("(max-width: 760px)").matches;
 
 const state = {
   page: 1,
-  pageSize: 12,
+  pageSize: isMobileViewport ? 8 : 12,
   filteredNotes: [...LOVE_NOTES],
   pinnedPromises: [],
   activePromise: PROMISE_LIBRARY[0],
@@ -158,6 +159,7 @@ class MagneticController {
   }
 
   init() {
+    if (!supportsFinePointer || isMobileViewport) return;
     const nodes = document.querySelectorAll(this.selector);
     nodes.forEach((node) => {
       node.addEventListener("pointermove", (event) => {
@@ -201,7 +203,7 @@ class AmbientBackground {
     this.ctx = canvas.getContext("2d");
     this.particles = [];
     this.rafId = 0;
-    this.count = 68;
+    this.count = isMobileViewport ? 34 : 68;
   }
 
   init() {
@@ -284,8 +286,9 @@ class FireworksEngine {
   };
 
   burst(x, y) {
-    for (let i = 0; i < 70; i += 1) {
-      const angle = (Math.PI * 2 * i) / 70;
+    const burstCount = isMobileViewport ? 44 : 70;
+    for (let i = 0; i < burstCount; i += 1) {
+      const angle = (Math.PI * 2 * i) / burstCount;
       const speed = 1.2 + Math.random() * 4.2;
       this.particles.push({
         x,
@@ -866,6 +869,7 @@ function attachLetterExport() {
 }
 
 function attachTiltCard() {
+  if (!supportsFinePointer || isMobileViewport) return;
   const card = dom.heroCard;
   card.addEventListener("pointermove", (event) => {
     const rect = card.getBoundingClientRect();
