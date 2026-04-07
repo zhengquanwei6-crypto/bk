@@ -1,10 +1,5 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 
-/**
- * 文章模型
- * 支持 Markdown 内容、标签分类、点赞、浏览量统计
- * 使用 MongoDB 全文索引支持搜索功能
- */
 const articleSchema = new mongoose.Schema(
   {
     title: {
@@ -82,43 +77,37 @@ const articleSchema = new mongoose.Schema(
   }
 );
 
-/**
- * 全文索引 — 支持标题和内容的搜索
- */
 articleSchema.index({ title: 'text', content: 'text', tags: 'text' });
-
-/**
- * 复合索引 — 优化常用查询
- */
 articleSchema.index({ status: 1, createdAt: -1 });
 articleSchema.index({ author: 1, status: 1 });
 articleSchema.index({ tags: 1, status: 1 });
 
-/**
- * 保存前自动生成 slug 和摘要
- */
+const toSafeSlug = (title) => {
+  const base = String(title || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return `${base || 'article'}-${Date.now().toString(36)}`;
+};
+
 articleSchema.pre('save', function (next) {
   if (this.isModified('title') && !this.slug) {
-    this.slug =
-      this.title
-        .toLowerCase()
-        .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
-        .replace(/^-|-$/g, '') +
-      '-' +
-      Date.now().toString(36);
+    this.slug = toSafeSlug(this.title);
   }
+
   if (this.isModified('content') && !this.excerpt) {
     this.excerpt = this.content
       .replace(/[#*`>\-\[\]()!]/g, '')
       .substring(0, 200)
       .trim();
   }
+
   next();
 });
 
-/**
- * 虚拟字段：评论列表
- */
 articleSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
