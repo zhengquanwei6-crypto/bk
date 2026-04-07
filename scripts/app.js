@@ -36,8 +36,11 @@ const dom = {
   preloader: document.getElementById("preloader"),
   preloaderProgress: document.getElementById("preloader-progress"),
   preloaderPercent: document.getElementById("preloader-percent"),
+  scrollProgressBar: document.getElementById("scroll-progress-bar"),
   cursorDot: document.getElementById("cursor-dot"),
   cursorRing: document.getElementById("cursor-ring"),
+  topNav: document.getElementById("top-nav"),
+  navGlider: document.getElementById("nav-glider"),
   typedIntro: document.getElementById("typed-intro"),
   timelineList: document.getElementById("timeline-list"),
   noteSearch: document.getElementById("note-search"),
@@ -72,6 +75,8 @@ const dom = {
   exportLetter: document.getElementById("export-letter"),
   openRitual: document.getElementById("open-ritual"),
   musicToggle: document.getElementById("music-toggle"),
+  mobileDock: document.getElementById("mobile-dock"),
+  mobileDockGlow: document.getElementById("mobile-dock-glow"),
   toastStack: document.getElementById("toast-stack"),
   heroCard: document.getElementById("hero-card"),
   ambientCanvas: document.getElementById("ambient-canvas"),
@@ -80,6 +85,8 @@ const dom = {
   finaleTitle: document.getElementById("finale-title"),
   finaleBody: document.getElementById("finale-body"),
 };
+dom.topNavLinks = Array.from(document.querySelectorAll("#top-nav-list a"));
+dom.mobileDockLinks = Array.from(document.querySelectorAll("#mobile-dock a"));
 
 const supportsFinePointer = window.matchMedia("(pointer:fine)").matches;
 
@@ -94,6 +101,17 @@ const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const easterState = {
+  brandTapCount: 0,
+  brandTapAt: 0,
+  easyOneTriggered: false,
+  easyTwoTriggered: false,
+  hiddenTriggered: false,
+  chapterIndex: 0,
+  chapterSequenceAt: 0,
+  keywordCooldownAt: 0,
+};
 
 class ToastCenter {
   constructor(root) {
@@ -457,6 +475,7 @@ class NotesExplorer {
       state.page = 1;
       this.applyFilters();
       this.render();
+      checkSearchEasterEgg(this.searchInput.value);
     };
     this.searchInput.addEventListener("input", onFilterChange);
     this.moodFilter.addEventListener("change", onFilterChange);
@@ -902,6 +921,205 @@ function attachSectionReveal() {
   revealObserver.watch(".section");
 }
 
+function moveIndicator(indicator, target, container, mode = "line") {
+  if (!indicator || !target || !container) return;
+  const containerRect = container.getBoundingClientRect();
+  const targetRect = target.getBoundingClientRect();
+  const x = targetRect.left - containerRect.left;
+  const y = targetRect.top - containerRect.top;
+  if (mode === "line") {
+    indicator.style.width = `${Math.max(16, targetRect.width - 6)}px`;
+    indicator.style.transform = `translateX(${x + 3}px)`;
+  } else {
+    indicator.style.width = `${targetRect.width}px`;
+    indicator.style.height = `${targetRect.height}px`;
+    indicator.style.transform = `translate(${x}px, ${y}px)`;
+  }
+  indicator.classList.add("is-visible");
+}
+
+function attachMenuSystem() {
+  const sectionOrder = ["hero", "story", "moments", "gallery", "quiz", "finale"];
+  const sections = sectionOrder.map((id) => document.getElementById(id)).filter(Boolean);
+  const update = () => {
+    const marker = window.scrollY + window.innerHeight * 0.36;
+    let activeId = "hero";
+    sections.forEach((section) => {
+      if (section.offsetTop <= marker) activeId = section.id;
+    });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+      activeId = "finale";
+    }
+
+    if (dom.scrollProgressBar) {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = clamp((window.scrollY / maxScroll) * 100, 0, 100);
+      dom.scrollProgressBar.style.width = `${progress.toFixed(2)}%`;
+    }
+
+    dom.topNavLinks.forEach((link) => {
+      const hit = link.getAttribute("href") === `#${activeId}`;
+      link.parentElement?.classList.toggle("is-active", hit);
+      if (hit && dom.navGlider && dom.topNav) {
+        moveIndicator(dom.navGlider, link, dom.topNav, "line");
+      }
+    });
+
+    dom.mobileDockLinks.forEach((link) => {
+      const hit = link.getAttribute("href") === `#${activeId}`;
+      link.classList.toggle("is-active", hit);
+      if (hit && dom.mobileDockGlow && dom.mobileDock) {
+        moveIndicator(dom.mobileDockGlow, link, dom.mobileDock, "block");
+      }
+    });
+
+    document.querySelectorAll(".section").forEach((section) => {
+      section.classList.toggle("is-spotlit", section.id === activeId);
+    });
+  };
+
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      update();
+      ticking = false;
+    });
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  dom.topNavLinks.forEach((link) => link.addEventListener("click", () => window.setTimeout(onScroll, 320)));
+  dom.mobileDockLinks.forEach((link) => link.addEventListener("click", () => window.setTimeout(onScroll, 320)));
+  onScroll();
+}
+
+function attachButtonRipples() {
+  const nodes = document.querySelectorAll(".solid-btn, .ghost-btn, #top-nav-list a, .mobile-dock a");
+  nodes.forEach((node) => {
+    if (node.dataset.rippleBound === "1") return;
+    node.dataset.rippleBound = "1";
+    node.addEventListener("pointerdown", (event) => {
+      const rect = node.getBoundingClientRect();
+      const ripple = document.createElement("span");
+      ripple.className = "menu-ripple";
+      ripple.style.left = `${event.clientX - rect.left}px`;
+      ripple.style.top = `${event.clientY - rect.top}px`;
+      node.append(ripple);
+      window.setTimeout(() => ripple.remove(), 700);
+    });
+  });
+}
+
+function spawnHeartLayer({ count = 22, duration = 4200, symbols = ["❤", "♡", "✦"], secret = false } = {}) {
+  const layer = document.createElement("div");
+  layer.className = "easter-layer";
+  document.body.append(layer);
+  for (let i = 0; i < count; i += 1) {
+    const item = document.createElement("span");
+    item.className = "easter-heart";
+    item.textContent = symbols[randomInt(0, symbols.length - 1)];
+    item.style.left = `${Math.random() * 100}%`;
+    item.style.fontSize = `${(0.86 + Math.random() * 1.18).toFixed(2)}rem`;
+    item.style.animationDuration = `${(2.8 + Math.random() * 2.4).toFixed(2)}s`;
+    item.style.animationDelay = `${(Math.random() * 0.6).toFixed(2)}s`;
+    item.style.setProperty("--drift", `${randomInt(-90, 90)}px`);
+    if (secret) {
+      item.style.color = `hsla(${randomInt(130, 190)}, 92%, 70%, 0.92)`;
+      item.style.textShadow = "0 0 14px rgba(72, 179, 164, 0.5)";
+    }
+    layer.append(item);
+  }
+  window.setTimeout(() => layer.remove(), duration);
+}
+
+function triggerEasyEggOne() {
+  spawnHeartLayer({ count: isMobileViewport ? 18 : 26, symbols: ["❤", "♡", "❥", "✦"] });
+  fireworks.start(2600);
+  if (!easterState.easyOneTriggered) {
+    easterState.easyOneTriggered = true;
+    toast.push("彩蛋①触发：三连点品牌进入甜蜜雨模式", 3200);
+  } else {
+    toast.push("甜蜜雨再次触发", 1800);
+  }
+}
+
+function triggerEasyEggTwo() {
+  spawnHeartLayer({ count: isMobileViewport ? 16 : 24, symbols: ["❤", "♡", "✧"] });
+  fireworks.start(2200);
+  openNoteModal(sample(LOVE_NOTES));
+  if (!easterState.easyTwoTriggered) {
+    easterState.easyTwoTriggered = true;
+    toast.push("彩蛋②触发：关键词已解锁浪漫模式", 3200);
+  } else {
+    toast.push("浪漫模式再次触发", 1800);
+  }
+}
+
+function triggerHiddenEgg() {
+  if (easterState.hiddenTriggered) return;
+  easterState.hiddenTriggered = true;
+  document.body.classList.add("is-aurora");
+  spawnHeartLayer({ count: isMobileViewport ? 24 : 34, symbols: ["✦", "✧", "❤"], secret: true, duration: 5200 });
+  fireworks.start(5200);
+  toast.push("隐藏彩蛋已解锁：Aurora Signature Mode", 4200);
+}
+
+function checkSearchEasterEgg(rawKeyword) {
+  const keyword = String(rawKeyword || "").trim().toLowerCase();
+  if (!keyword) return;
+  if (Date.now() - easterState.keywordCooldownAt < 3200) return;
+  if (/(^|\\s)(520|1314)(\\s|$)|iloveyou|forever|love/.test(keyword)) {
+    easterState.keywordCooldownAt = Date.now();
+    triggerEasyEggTwo();
+  }
+}
+
+function attachEasterEggs() {
+  const brand = document.querySelector(".brand");
+  if (brand) {
+    brand.addEventListener("click", () => {
+      const now = Date.now();
+      if (now - easterState.brandTapAt < 900) {
+        easterState.brandTapCount += 1;
+      } else {
+        easterState.brandTapCount = 1;
+      }
+      easterState.brandTapAt = now;
+      if (easterState.brandTapCount >= 3) {
+        easterState.brandTapCount = 0;
+        triggerEasyEggOne();
+      }
+    });
+  }
+
+  const secretSequence = ["Chapter I", "Chapter II", "Chapter III", "Chapter IV", "Chapter V"];
+  document.querySelectorAll(".section__heading p").forEach((node) => {
+    node.addEventListener("click", () => {
+      if (!music.isPlaying) {
+        easterState.chapterIndex = 0;
+        return;
+      }
+      const current = node.textContent.trim();
+      const now = Date.now();
+      if (now - easterState.chapterSequenceAt > 12000) {
+        easterState.chapterIndex = 0;
+      }
+      easterState.chapterSequenceAt = now;
+      if (current === secretSequence[easterState.chapterIndex]) {
+        easterState.chapterIndex += 1;
+        if (easterState.chapterIndex === secretSequence.length) {
+          easterState.chapterIndex = 0;
+          triggerHiddenEgg();
+        }
+      } else {
+        easterState.chapterIndex = current === secretSequence[0] ? 1 : 0;
+      }
+    });
+  });
+}
+
 async function runPreloader() {
   for (let i = 0; i <= 100; i += 1) {
     dom.preloaderProgress.style.width = `${i}%`;
@@ -950,6 +1168,9 @@ async function bootstrap() {
   attachTiltCard();
   attachHeaderBehavior();
   attachSectionReveal();
+  attachMenuSystem();
+  attachButtonRipples();
+  attachEasterEggs();
   cursor.init();
   magnetic.init();
   typewriter.init();
