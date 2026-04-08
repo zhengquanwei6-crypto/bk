@@ -51,13 +51,77 @@ const COMPOSER_BANK = {
   gesture: ["把回应放在前面", "把细节记在心里", "把陪伴做成长线", "把情绪接住再表达", "把关系经营成作品"],
   future: ["把明天写进计划里", "把纪念日做成仪式", "把家感慢慢建起来", "把成长写进同一页", "把每次远行都变成共创"],
 };
+const PERSONAL_STORY = [
+  {
+    id: "PS-01",
+    phase: "初遇",
+    date: "2022-02-16",
+    scene: "学校",
+    title: "第一次见面，是在学校里很普通的一天",
+    detail:
+      "2022 年 2 月 16 日，{{SENDER}} 和 {{RECIPIENT}} 第一次在学校见面。那时候并没有命中注定般的戏剧感，甚至没什么特别感觉，但也正因为足够普通，后来回头看时，才更像命运把重要的人轻轻放进了日常。",
+    promise:
+      "{{SENDER}} 会一直记得，真正重要的关系不一定从惊艳开始，也可以从平静开始，然后慢慢变得无可替代。",
+  },
+  {
+    id: "PS-02",
+    phase: "相知",
+    date: "2023-03-03",
+    scene: "学校",
+    title: "2023 年 3 月 3 日，我们终于有了名字",
+    detail:
+      "在学校里，{{RECIPIENT}} 先开了口。对 {{SENDER}} 来说，那一天最重要的不是一句表白本身，而是从那一刻起，{{RELATION}} 不再只是模糊的靠近，而是有了可以认真经营的身份。",
+    promise:
+      "{{SENDER}} 会把 2023 年 3 月 3 日记得很久，因为那是 {{RECIPIENT}} 先向前一步、也是 {{SENDER}} 真正想把未来放进这段关系里的开始。",
+  },
+  {
+    id: "PS-03",
+    phase: "热恋",
+    date: "2023-03-07",
+    scene: "长春广告展",
+    title: "去长春广告展的那天，最难忘的是一路聊天",
+    detail:
+      "2023 年 3 月 7 日，{{SENDER}} 和 {{RECIPIENT}} 一起去了长春广告展。真正留在记忆里的，不只是目的地，而是一路上不停延伸的聊天。比起热闹的场面，{{SENDER}} 更记得和 {{RECIPIENT}} 待在同一个节奏里时那种自然和舒服。",
+    promise:
+      "{{SENDER}} 想保留这种感觉：不管去哪里，只要和 {{RECIPIENT}} 在一起，路上的时间都值得被认真收藏。",
+  },
+  {
+    id: "PS-04",
+    phase: "并肩",
+    date: "2022-12-01",
+    scene: "疫情期间",
+    title: "一开始在疫情里，我们几乎每天都一起打游戏",
+    detail:
+      "没有特别隆重的剧情，却有很长一段稳定的陪伴。疫情期间，{{SENDER}} 和 {{RECIPIENT}} 几乎每天都会一起打游戏。对 {{SENDER}} 来说，这种持续出现、持续在线、持续回应，本身就是关系里很珍贵的偏爱。",
+    promise:
+      "{{SENDER}} 会继续珍惜这种陪伴感，不让重要的人只停留在说说而已，而是一直真实地出现在彼此的生活里。",
+  },
+  {
+    id: "PS-05",
+    phase: "未来",
+    date: "2026-01-01",
+    scene: "未来",
+    title: "没有轰烈的冲突戏码，但我想把稳定和偏爱都给你",
+    detail:
+      "{{SENDER}} 和 {{RECIPIENT}} 没有特别戏剧化的争吵与和好节点，这反而让 {{SENDER}} 更想珍惜现在拥有的平稳。真正想写进未来的，不是起伏，而是长期、稳定、克制却明确的偏爱。",
+    promise:
+      "{{SENDER}} 想给 {{RECIPIENT}} 的，不只是当下的喜欢，而是可以被时间反复验证的认真和站在你身边的长期感。",
+  },
+];
+const PERSONAL_PROMISES = [
+  "{{SENDER}} 会把偏爱给得更明确一点，让 {{RECIPIENT}} 不需要反复猜测。",
+  "{{SENDER}} 会把陪伴做得更稳定一点，不只是说在乎，而是真的出现在 {{RECIPIENT}} 身边。",
+  "{{SENDER}} 会把这段关系当成长期作品来经营，不敷衍、不缺席，也不轻易放手。",
+  "{{SENDER}} 会记得从学校开始的每一步靠近，也会认真走好以后更长的路。",
+  "{{SENDER}} 想和 {{RECIPIENT}} 把普通日子过得有质感，也把未来过得更值得期待。",
+];
 
 const state = {
   page: 1,
   pageSize: isMobileViewport ? 8 : 12,
   filteredNotes: [...LOVE_NOTES],
   pinnedPromises: [],
-  activePromise: PROMISE_LIBRARY[0],
+  activePromise: PERSONAL_PROMISES[0] || PROMISE_LIBRARY[0],
   quizStep: 0,
   quizScore: 0,
   ceremonyRunning: false,
@@ -633,8 +697,9 @@ class PromiseTheater {
   init() {
     this.renderCurrent();
     this.nextButton.addEventListener("click", () => {
-      this.pointer = (this.pointer + 1) % PROMISE_LIBRARY.length;
-      state.activePromise = PROMISE_LIBRARY[this.pointer];
+      const promisePool = PERSONAL_PROMISES.length > 0 ? PERSONAL_PROMISES : PROMISE_LIBRARY;
+      this.pointer = (this.pointer + 1) % promisePool.length;
+      state.activePromise = promisePool[this.pointer];
       this.renderCurrent();
     });
     this.pinButton.addEventListener("click", () => {
@@ -698,7 +763,7 @@ function composeSignatureLine() {
   const future = COMPOSER_BANK.future[state.composer.future];
   const scene = SCENES[state.activeScene];
   return applyTemplate(
-    `{{SENDER}} 想用一种${tone}的方式，和 {{RECIPIENT}} 一起${gesture}，再慢慢${future}。如果这段关系是一部作品，那它此刻最适合被放进「${scene.tone}」这个镜头里。`,
+    `从学校开始，到 2023 年 3 月 3 日真正有了名字，{{SENDER}} 想继续用一种${tone}的方式和 {{RECIPIENT}} 一起${gesture}，再慢慢${future}。如果{{RELATION}}是一部作品，那它此刻最适合被放进「${scene.tone}」这个镜头里。`,
   );
 }
 
@@ -933,12 +998,7 @@ function seedPaletteWall() {
 }
 
 function seedTimeline() {
-  const phaseOrder = ["初遇", "相知", "热恋", "并肩", "未来"];
-  const selected = [];
-  phaseOrder.forEach((phase) => {
-    const pool = LOVE_NOTES.filter((note) => note.phase === phase).slice(0, 4);
-    selected.push(...pool);
-  });
+  const selected = PERSONAL_STORY;
   dom.timelineList.innerHTML = selected
     .map(
       (note) => `
@@ -956,7 +1016,7 @@ function seedTimeline() {
     .join("");
 
   dom.timelineList.querySelectorAll(".story-item").forEach((item) => {
-    const note = LOVE_NOTES.find((entry) => entry.id === item.dataset.noteId);
+    const note = PERSONAL_STORY.find((entry) => entry.id === item.dataset.noteId);
     item.addEventListener("click", () => openNoteModal(note));
   });
   revealObserver.watch(".story-item");
@@ -1008,7 +1068,7 @@ function attachRandomNoteAction() {
     const scenes = Object.keys(SCENES);
     state.activeScene = scenes[randomInt(0, scenes.length - 1)];
     renderSceneStage();
-    openNoteModal(sample(LOVE_NOTES));
+    openNoteModal(sample(PERSONAL_STORY));
   });
 }
 
@@ -1222,7 +1282,7 @@ function triggerEasyEggOne() {
 function triggerEasyEggTwo() {
   spawnHeartLayer({ count: isMobileViewport ? 16 : 24, symbols: ["❤", "♡", "✧"] });
   fireworks.start(2200);
-  openNoteModal(sample(LOVE_NOTES));
+  openNoteModal(sample(PERSONAL_STORY));
   if (!easterState.easyTwoTriggered) {
     easterState.easyTwoTriggered = true;
     toast.push("彩蛋②触发：关键词已解锁浪漫模式", 3200);
