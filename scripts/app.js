@@ -19,6 +19,37 @@ const applyTemplate = (text) =>
     .replaceAll("{{RECIPIENT}}", TEMPLATE.recipientName)
     .replaceAll("{{RELATION}}", TEMPLATE.relationLabel);
 const isMobileViewport = window.matchMedia("(max-width: 760px)").matches;
+const SCENES = {
+  dawn: {
+    badge: "Scene / Dawn Bloom",
+    title: "把页面切成一枚带暖金反光的开场镜头",
+    description: "晨光版本更适合表达偏爱、重视感和关系被温柔托住的安全感，像一场刚刚开始的首映礼。",
+    tone: "晨光金调",
+    motion: "Soft Drift",
+    atmosphere: "Warm Premiere",
+  },
+  velvet: {
+    badge: "Scene / Velvet Night",
+    title: "让同一句喜欢，拥有夜场丝绒一样的包裹感",
+    description: "夜场版本把页面压低亮度、拉长余韵，适合更克制、更暧昧、也更成熟的告白表达。",
+    tone: "丝绒夜场",
+    motion: "Velvet Float",
+    atmosphere: "After Dark",
+  },
+  tide: {
+    badge: "Scene / Tidal Air",
+    title: "把表白写成海风与潮汐之间的长镜头",
+    description: "潮汐版本更轻盈也更清澈，适合写并肩感、长期感，以及一起走向未来的从容。",
+    tone: "潮汐蓝幕",
+    motion: "Ocean Sweep",
+    atmosphere: "Clear Horizon",
+  },
+};
+const COMPOSER_BANK = {
+  tone: ["直白偏爱", "慢热笃定", "电影感铺陈", "克制高级", "热烈庆典"],
+  gesture: ["把回应放在前面", "把细节记在心里", "把陪伴做成长线", "把情绪接住再表达", "把关系经营成作品"],
+  future: ["把明天写进计划里", "把纪念日做成仪式", "把家感慢慢建起来", "把成长写进同一页", "把每次远行都变成共创"],
+};
 
 const state = {
   page: 1,
@@ -30,6 +61,13 @@ const state = {
   quizScore: 0,
   ceremonyRunning: false,
   reduceMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  activeScene: "dawn",
+  composer: {
+    tone: 0,
+    gesture: 0,
+    future: 0,
+  },
+  generatedLine: "",
 };
 
 const dom = {
@@ -42,6 +80,20 @@ const dom = {
   topNav: document.getElementById("top-nav"),
   navGlider: document.getElementById("nav-glider"),
   typedIntro: document.getElementById("typed-intro"),
+  atelierStage: document.getElementById("atelier-stage"),
+  sceneBadge: document.getElementById("scene-badge"),
+  sceneTitle: document.getElementById("scene-title"),
+  sceneDescription: document.getElementById("scene-description"),
+  sceneTone: document.getElementById("scene-tone"),
+  sceneMotion: document.getElementById("scene-motion"),
+  sceneAtmosphere: document.getElementById("scene-atmosphere"),
+  sceneSwitcher: document.getElementById("scene-switcher"),
+  toneChips: document.getElementById("tone-chips"),
+  gestureChips: document.getElementById("gesture-chips"),
+  futureChips: document.getElementById("future-chips"),
+  composerOutput: document.getElementById("composer-output"),
+  remixLine: document.getElementById("remix-line"),
+  saveLine: document.getElementById("save-line"),
   timelineList: document.getElementById("timeline-list"),
   noteSearch: document.getElementById("note-search"),
   noteMoodFilter: document.getElementById("note-mood-filter"),
@@ -609,6 +661,115 @@ class PromiseTheater {
   }
 }
 
+function renderSceneStage(announce = false) {
+  const scene = SCENES[state.activeScene];
+  if (!scene) return;
+  document.body.dataset.scene = state.activeScene;
+  if (dom.atelierStage) {
+    dom.atelierStage.dataset.scene = state.activeScene;
+    if (!state.reduceMotion) {
+      dom.atelierStage.animate(
+        [
+          { transform: "translateY(6px) scale(0.986)", opacity: 0.72 },
+          { transform: "translateY(0) scale(1)", opacity: 1 },
+        ],
+        { duration: 520, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+      );
+    }
+  }
+  if (dom.sceneBadge) dom.sceneBadge.textContent = scene.badge;
+  if (dom.sceneTitle) dom.sceneTitle.textContent = scene.title;
+  if (dom.sceneDescription) dom.sceneDescription.textContent = scene.description;
+  if (dom.sceneTone) dom.sceneTone.textContent = scene.tone;
+  if (dom.sceneMotion) dom.sceneMotion.textContent = scene.motion;
+  if (dom.sceneAtmosphere) dom.sceneAtmosphere.textContent = scene.atmosphere;
+  document.querySelectorAll(".scene-chip").forEach((chip) => {
+    chip.classList.toggle("is-active", chip.dataset.scene === state.activeScene);
+  });
+  if (announce) {
+    toast.push(`场景已切换为 ${scene.tone}`, 1800);
+  }
+}
+
+function composeSignatureLine() {
+  const tone = COMPOSER_BANK.tone[state.composer.tone];
+  const gesture = COMPOSER_BANK.gesture[state.composer.gesture];
+  const future = COMPOSER_BANK.future[state.composer.future];
+  const scene = SCENES[state.activeScene];
+  return applyTemplate(
+    `{{SENDER}} 想用一种${tone}的方式，和 {{RECIPIENT}} 一起${gesture}，再慢慢${future}。如果这段关系是一部作品，那它此刻最适合被放进「${scene.tone}」这个镜头里。`,
+  );
+}
+
+function renderComposerChips(container, key) {
+  if (!container) return;
+  container.innerHTML = COMPOSER_BANK[key]
+    .map(
+      (label, index) =>
+        `<button type="button" class="${state.composer[key] === index ? "is-active" : ""}" data-key="${key}" data-index="${index}">${label}</button>`,
+    )
+    .join("");
+  container.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.composer[key] = Number(button.dataset.index);
+      renderComposer();
+    });
+  });
+}
+
+function renderComposer() {
+  renderComposerChips(dom.toneChips, "tone");
+  renderComposerChips(dom.gestureChips, "gesture");
+  renderComposerChips(dom.futureChips, "future");
+  state.generatedLine = composeSignatureLine();
+  if (dom.composerOutput) {
+    dom.composerOutput.textContent = state.generatedLine;
+  }
+}
+
+function attachAtelier() {
+  renderSceneStage();
+  renderComposer();
+
+  if (dom.sceneSwitcher) {
+    dom.sceneSwitcher.querySelectorAll(".scene-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const next = chip.dataset.scene;
+        if (!next || next === state.activeScene) return;
+        state.activeScene = next;
+        renderSceneStage(true);
+        renderComposer();
+      });
+    });
+  }
+
+  if (dom.remixLine) {
+    dom.remixLine.addEventListener("click", () => {
+      state.composer.tone = randomInt(0, COMPOSER_BANK.tone.length - 1);
+      state.composer.gesture = randomInt(0, COMPOSER_BANK.gesture.length - 1);
+      state.composer.future = randomInt(0, COMPOSER_BANK.future.length - 1);
+      renderComposer();
+      toast.push("已生成新的签名句", 1800);
+    });
+  }
+
+  if (dom.saveLine) {
+    dom.saveLine.addEventListener("click", () => {
+      if (!state.generatedLine) renderComposer();
+      if (!state.pinnedPromises.includes(state.generatedLine)) {
+        state.pinnedPromises.unshift(state.generatedLine);
+        state.pinnedPromises = state.pinnedPromises.slice(0, 10);
+        state.activePromise = state.generatedLine;
+        promiseTheater.renderCurrent();
+        promiseTheater.renderPinned();
+        toast.push("已加入誓言收藏", 2000);
+      } else {
+        toast.push("这句已经收藏过了", 1800);
+      }
+    });
+  }
+}
+
 class QuizEngine {
   constructor() {
     this.progress = dom.quizProgress;
@@ -834,14 +995,17 @@ function attachShuffleAction() {
 
 function attachRandomNoteAction() {
   dom.showRandomNote.addEventListener("click", () => {
+    const scenes = Object.keys(SCENES);
+    state.activeScene = scenes[randomInt(0, scenes.length - 1)];
+    renderSceneStage();
     openNoteModal(sample(LOVE_NOTES));
   });
 }
 
 function attachPromiseShortcuts() {
   dom.openRitual.addEventListener("click", () => {
-    document.getElementById("finale").scrollIntoView({ behavior: "smooth", block: "center" });
-    toast.push("已跳转至最终章节", 1800);
+    document.getElementById("atelier").scrollIntoView({ behavior: "smooth", block: "center" });
+    toast.push("已进入灵感舱", 1800);
   });
 }
 
@@ -939,7 +1103,7 @@ function moveIndicator(indicator, target, container, mode = "line") {
 }
 
 function attachMenuSystem() {
-  const sectionOrder = ["hero", "story", "moments", "gallery", "quiz", "finale"];
+  const sectionOrder = ["hero", "atelier", "story", "moments", "gallery", "quiz", "finale"];
   const sections = sectionOrder.map((id) => document.getElementById(id)).filter(Boolean);
   const update = () => {
     const marker = window.scrollY + window.innerHeight * 0.36;
@@ -1154,6 +1318,7 @@ async function bootstrap() {
   notesExplorer.applyFilters();
   notesExplorer.init();
   promiseTheater.init();
+  attachAtelier();
   quizEngine.init();
   countdown.init();
   ambientBg.init();

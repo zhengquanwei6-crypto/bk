@@ -36,6 +36,7 @@
     <nav aria-label="页面导航" id="top-nav">
       <ul id="top-nav-list">
         <li><a href="#hero">起始</a></li>
+        <li><a href="#atelier">灵感舱</a></li>
         <li><a href="#story">叙事线</a></li>
         <li><a href="#moments">记忆库</a></li>
         <li><a href="#gallery">誓言库</a></li>
@@ -88,6 +89,91 @@
         <div class="tilt-card__footer">
           <span>Valid Through</span>
           <strong>Forever</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="atelier section" id="atelier">
+      <div class="section__heading">
+        <p>Chapter 0</p>
+        <h2>灵感舱与场景导演台</h2>
+      </div>
+      <div class="atelier__layout">
+        <div class="atelier-stage" id="atelier-stage" data-scene="dawn">
+          <div class="atelier-stage__halo atelier-stage__halo--a" aria-hidden="true"></div>
+          <div class="atelier-stage__halo atelier-stage__halo--b" aria-hidden="true"></div>
+          <p class="atelier-stage__badge" id="scene-badge">Scene / Dawn Bloom</p>
+          <h3 id="scene-title">把页面切成一个有情绪的电影镜头</h3>
+          <p class="atelier-stage__copy" id="scene-description">
+            这里不是普通换皮，而是切换整页的叙事气质、色温与节奏感，让同一句表白在不同场景里拥有不同情绪。
+          </p>
+          <div class="atelier-stage__meta">
+            <article>
+              <span>Scene Tone</span>
+              <strong id="scene-tone">晨光金调</strong>
+            </article>
+            <article>
+              <span>Motion Profile</span>
+              <strong id="scene-motion">Soft Drift</strong>
+            </article>
+            <article>
+              <span>Atmosphere</span>
+              <strong id="scene-atmosphere">Warm Premiere</strong>
+            </article>
+          </div>
+        </div>
+
+        <div class="atelier__sidebar">
+          <div class="scene-switcher">
+            <div class="scene-switcher__head">
+              <p>Scene Switcher</p>
+              <span>点击即可改写整页气氛</span>
+            </div>
+            <div class="scene-switcher__grid" id="scene-switcher">
+              <button type="button" class="scene-chip is-active" data-scene="dawn">晨光金调</button>
+              <button type="button" class="scene-chip" data-scene="velvet">丝绒夜场</button>
+              <button type="button" class="scene-chip" data-scene="tide">潮汐蓝幕</button>
+            </div>
+          </div>
+
+          <div class="composer" id="composer">
+            <div class="composer__head">
+              <p>Confession Composer</p>
+              <span>动态拼一句更像作品文案的表达</span>
+            </div>
+            <div class="composer__group">
+              <label>语气</label>
+              <div class="composer__chips" id="tone-chips"></div>
+            </div>
+            <div class="composer__group">
+              <label>关系动作</label>
+              <div class="composer__chips" id="gesture-chips"></div>
+            </div>
+            <div class="composer__group">
+              <label>未来方向</label>
+              <div class="composer__chips" id="future-chips"></div>
+            </div>
+            <div class="composer__output" id="composer-output"></div>
+            <div class="composer__actions">
+              <button type="button" class="solid-btn magnetic" id="remix-line">生成一句</button>
+              <button type="button" class="ghost-btn magnetic" id="save-line">收藏到誓言</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="marquee-ribbon" aria-hidden="true">
+        <div class="marquee-ribbon__track">
+          <span>HIGH EMOTION</span>
+          <span>FILMIC TRANSITIONS</span>
+          <span>LOVE AS DESIGN</span>
+          <span>PERSONALIZED RHYTHM</span>
+          <span>IMMERSIVE ONE PAGE</span>
+          <span>HIGH EMOTION</span>
+          <span>FILMIC TRANSITIONS</span>
+          <span>LOVE AS DESIGN</span>
+          <span>PERSONALIZED RHYTHM</span>
+          <span>IMMERSIVE ONE PAGE</span>
         </div>
       </div>
     </section>
@@ -207,6 +293,7 @@
   <nav class="mobile-dock" id="mobile-dock" aria-label="移动快捷菜单">
     <span class="mobile-dock__glow" id="mobile-dock-glow" aria-hidden="true"></span>
     <a href="#hero" data-section="hero">起始</a>
+    <a href="#atelier" data-section="atelier">灵感</a>
     <a href="#story" data-section="story">叙事</a>
     <a href="#moments" data-section="moments">记忆</a>
     <a href="#gallery" data-section="gallery">誓言</a>
