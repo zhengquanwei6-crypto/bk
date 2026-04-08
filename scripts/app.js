@@ -2,12 +2,13 @@
 const PROMISE_LIBRARY = window.PROMISE_LIBRARY || [];
 const QUIZ_BANK = window.QUIZ_BANK || [];
 const TEMPLATE_DEFAULTS = {
-  senderName: "你的名字",
-  recipientName: "TA的名字",
+  senderName: "郑权威",
+  recipientName: "辛视野",
   relationLabel: "我们",
-  anniversaryMonth: 12,
-  anniversaryDay: 24,
-  exportFileName: "confession-template-letter.txt",
+  anniversaryYear: 2023,
+  anniversaryMonth: 3,
+  anniversaryDay: 3,
+  exportFileName: "zhengquanwei-xinshiye-letter.txt",
 };
 const TEMPLATE = {
   ...TEMPLATE_DEFAULTS,
@@ -962,8 +963,17 @@ function seedTimeline() {
 }
 
 function updateHeroStats() {
-  const dates = LOVE_NOTES.map((note) => new Date(note.date).getTime()).sort((a, b) => a - b);
-  const firstDate = dates[0] || Date.now();
+  const anniversaryYear = Number(TEMPLATE.anniversaryYear);
+  const anniversaryMonth = Number(TEMPLATE.anniversaryMonth);
+  const anniversaryDay = Number(TEMPLATE.anniversaryDay);
+  const hasAnniversary =
+    Number.isFinite(anniversaryYear) &&
+    Number.isFinite(anniversaryMonth) &&
+    Number.isFinite(anniversaryDay) &&
+    anniversaryYear > 2000;
+  const firstDate = hasAnniversary
+    ? new Date(anniversaryYear, anniversaryMonth - 1, anniversaryDay).getTime()
+    : LOVE_NOTES.map((note) => new Date(note.date).getTime()).sort((a, b) => a - b)[0] || Date.now();
   const days = Math.max(1, Math.floor((Date.now() - firstDate) / (1000 * 60 * 60 * 24)));
   dom.statDays.textContent = formatNumber(days);
   dom.statNotes.textContent = formatNumber(LOVE_NOTES.length);
@@ -1295,9 +1305,9 @@ async function runPreloader() {
 
 async function bootstrap() {
   const typewriterLines = [
-    "这是一个可复用的高端告白模板，已预置完整视觉和互动节奏。",
-    "将 {{SENDER}}、{{RECIPIENT}}、纪念日等配置替换后即可直接发布。",
-    "建议补充你们的真实瞬间，让模板升级为专属版本。",
+    "{{RECIPIENT}}，这一页不是展示，而是 {{SENDER}} 写给你的一次郑重偏爱。",
+    "从 2023 年 3 月 3 日开始，我想把关于 {{RELATION}} 的认真，做成一件可以反复打开的作品。",
+    "如果高级感是一种表达方式，那 {{SENDER}} 想用最克制也最坚定的方式告诉 {{RECIPIENT}}：我一直在认真爱你。",
   ].map((line) => applyTemplate(line));
   const typewriter = new Typewriter(dom.typedIntro, typewriterLines);
 
@@ -1306,11 +1316,11 @@ async function bootstrap() {
 
   await runPreloader();
 
-  document.title = `${TEMPLATE.senderName} × ${TEMPLATE.recipientName} | 高端告白模板`;
+  document.title = `${TEMPLATE.senderName} | 致 ${TEMPLATE.recipientName}`;
   const brandAccent = document.querySelector(".brand span");
-  if (brandAccent) brandAccent.textContent = TEMPLATE.relationLabel;
-  if (dom.finaleTitle) dom.finaleTitle.textContent = applyTemplate("{{RECIPIENT}}，愿我们一起把接下来的日子写成更好的 {{RELATION}}。");
-  if (dom.finaleBody) dom.finaleBody.textContent = applyTemplate("这段话可编辑：{{SENDER}} 想对 {{RECIPIENT}} 说，感谢你愿意一起经营、沟通与成长。愿 {{RELATION}} 保持热烈，也保持稳定。");
+  if (brandAccent) brandAccent.textContent = `致${TEMPLATE.recipientName}`;
+  if (dom.finaleTitle) dom.finaleTitle.textContent = applyTemplate("{{RECIPIENT}}，愿未来所有重要时刻，我都能站在你身边。");
+  if (dom.finaleBody) dom.finaleBody.textContent = applyTemplate("这页是 {{SENDER}} 送给 {{RECIPIENT}} 的。不是为了把喜欢说得夸张，而是想把我对你的认真、偏爱和长期心意，安静而笃定地放在这里。");
 
   updateHeroStats();
   seedTimeline();
