@@ -23,33 +23,33 @@ const isMobileViewport = window.matchMedia("(max-width: 760px)").matches;
 const SCENES = {
   dawn: {
     badge: "Scene / Dawn Bloom",
-    title: "把页面切成一枚带暖金反光的开场镜头",
-    description: "晨光版本更适合表达偏爱、重视感和关系被温柔托住的安全感，像一场刚刚开始的首映礼。",
+    title: "把页面切成一个带暖金反光的开场镜头",
+    description: "晨光版本适合把话说得少一点，但把态度放得更清楚，像清晨第一束落在桌面的光。",
     tone: "晨光金调",
     motion: "Soft Drift",
     atmosphere: "Warm Premiere",
   },
   velvet: {
     badge: "Scene / Velvet Night",
-    title: "让同一句喜欢，拥有夜场丝绒一样的包裹感",
-    description: "夜场版本把页面压低亮度、拉长余韵，适合更克制、更暧昧、也更成熟的告白表达。",
+    title: "让同一句话拥有夜场丝绒一样的包裹感",
+    description: "夜场版本会压低亮度、拉长余韵，更适合沉静、成熟，也更有分寸感的表达。",
     tone: "丝绒夜场",
     motion: "Velvet Float",
     atmosphere: "After Dark",
   },
   tide: {
     badge: "Scene / Tidal Air",
-    title: "把表白写成海风与潮汐之间的长镜头",
-    description: "潮汐版本更轻盈也更清澈，适合写并肩感、长期感，以及一起走向未来的从容。",
+    title: "把这份记录写成海风和潮汐之间的长镜头",
+    description: "潮汐版本更干净，也更从容，适合写并肩、长期和以后那些还没说完的部分。",
     tone: "潮汐蓝幕",
     motion: "Ocean Sweep",
     atmosphere: "Clear Horizon",
   },
 };
 const COMPOSER_BANK = {
-  tone: ["直白偏爱", "慢热笃定", "电影感铺陈", "克制高级", "热烈庆典"],
-  gesture: ["把回应放在前面", "把细节记在心里", "把陪伴做成长线", "把情绪接住再表达", "把关系经营成作品"],
-  future: ["把明天写进计划里", "把纪念日做成仪式", "把家感慢慢建起来", "把成长写进同一页", "把每次远行都变成共创"],
+  tone: ["克制明确", "慢热笃定", "安静发光", "电影式留白", "长期主义"],
+  gesture: ["把回应做得更及时", "把细节记得更具体", "把陪伴做得更稳定", "把情绪先接住", "把关系认真经营"],
+  future: ["把更多日子过成同一页", "把纪念日认真留下来", "把并肩这件事做长", "把远行继续走下去", "把以后慢慢落到现实里"],
 };
 const PERSONAL_STORY = [
   {
@@ -59,69 +59,203 @@ const PERSONAL_STORY = [
     scene: "学校",
     title: "第一次见面，是在学校里很普通的一天",
     detail:
-      "2022 年 2 月 16 日，{{SENDER}} 和 {{RECIPIENT}} 第一次在学校见面。那时候并没有命中注定般的戏剧感，甚至没什么特别感觉，但也正因为足够普通，后来回头看时，才更像命运把重要的人轻轻放进了日常。",
+      "2022 年 2 月 16 日，{{SENDER}} 和 {{RECIPIENT}} 第一次在学校见面。那天没有戏剧化的开场，甚至谈不上有什么特别感觉。也是因为这样，后来再回头看时，才会更清楚地意识到，真正重要的人有时就是这样安静地进入生活。",
     promise:
-      "{{SENDER}} 会一直记得，真正重要的关系不一定从惊艳开始，也可以从平静开始，然后慢慢变得无可替代。",
+      "{{SENDER}} 会记得，重要的人不一定从惊艳开始，也可以从平静开始，然后慢慢变得无可替代。",
   },
   {
     id: "PS-02",
-    phase: "相知",
+    phase: "确认",
     date: "2023-03-03",
     scene: "学校",
-    title: "2023 年 3 月 3 日，我们终于有了名字",
+    title: "2023 年 3 月 3 日，在学校里，我们终于把关系说清楚",
     detail:
-      "在学校里，{{RECIPIENT}} 先开了口。对 {{SENDER}} 来说，那一天最重要的不是一句表白本身，而是从那一刻起，{{RELATION}} 不再只是模糊的靠近，而是有了可以认真经营的身份。",
+      "那天是在学校，{{RECIPIENT}} 先开了口。对 {{SENDER}} 来说，真正重要的不是某一句话本身，而是从那一刻开始，{{RELATION}} 不再只是模糊的靠近，而是有了明确、可以认真经营的身份。",
     promise:
-      "{{SENDER}} 会把 2023 年 3 月 3 日记得很久，因为那是 {{RECIPIENT}} 先向前一步、也是 {{SENDER}} 真正想把未来放进这段关系里的开始。",
+      "{{SENDER}} 会把 2023 年 3 月 3 日记得很久，因为那是 {{RECIPIENT}} 先向前一步，也是 {{SENDER}} 真正决定把以后放进这段关系里的开始。",
   },
   {
     id: "PS-03",
-    phase: "热恋",
+    phase: "并肩",
     date: "2023-03-07",
     scene: "长春广告展",
     title: "去长春广告展的那天，最难忘的是一路聊天",
     detail:
-      "2023 年 3 月 7 日，{{SENDER}} 和 {{RECIPIENT}} 一起去了长春广告展。真正留在记忆里的，不只是目的地，而是一路上不停延伸的聊天。比起热闹的场面，{{SENDER}} 更记得和 {{RECIPIENT}} 待在同一个节奏里时那种自然和舒服。",
+      "2023 年 3 月 7 日，{{SENDER}} 和 {{RECIPIENT}} 一起去了长春广告展。真正留在记忆里的，不只是目的地，而是路上一直延伸的聊天。比起热闹的场面，{{SENDER}} 更记得和 {{RECIPIENT}} 处在同一个节奏里时，那种很自然也很舒服的感觉。",
     promise:
-      "{{SENDER}} 想保留这种感觉：不管去哪里，只要和 {{RECIPIENT}} 在一起，路上的时间都值得被认真收藏。",
+      "{{SENDER}} 想保留这种感觉，不管去哪里，只要和 {{RECIPIENT}} 在一起，路上的时间都值得被认真留下。",
   },
   {
     id: "PS-04",
-    phase: "并肩",
+    phase: "相知",
     date: "2022-12-01",
     scene: "疫情期间",
     title: "一开始在疫情里，我们几乎每天都一起打游戏",
     detail:
-      "没有特别隆重的剧情，却有很长一段稳定的陪伴。疫情期间，{{SENDER}} 和 {{RECIPIENT}} 几乎每天都会一起打游戏。对 {{SENDER}} 来说，这种持续出现、持续在线、持续回应，本身就是关系里很珍贵的偏爱。",
+      "这不是某一个特别晚上的片段，而是一整段持续出现的时间。疫情期间，{{SENDER}} 和 {{RECIPIENT}} 几乎每天都会一起打游戏。对 {{SENDER}} 来说，稳定上线、稳定回应、稳定出现在彼此的日常里，本身就已经很重要。",
     promise:
-      "{{SENDER}} 会继续珍惜这种陪伴感，不让重要的人只停留在说说而已，而是一直真实地出现在彼此的生活里。",
+      "{{SENDER}} 会继续珍惜这种陪伴感，不让在乎停留在嘴上，而是一直真实地出现在彼此的生活里。",
   },
   {
     id: "PS-05",
     phase: "未来",
     date: "2026-01-01",
-    scene: "未来",
-    title: "没有轰烈的冲突戏码，但我想把稳定和偏爱都给你",
+    scene: "以后",
+    title: "没有戏剧化的起伏，但我想把稳定和以后都留给你",
     detail:
-      "{{SENDER}} 和 {{RECIPIENT}} 没有特别戏剧化的争吵与和好节点，这反而让 {{SENDER}} 更想珍惜现在拥有的平稳。真正想写进未来的，不是起伏，而是长期、稳定、克制却明确的偏爱。",
+      "{{SENDER}} 和 {{RECIPIENT}} 没有太多戏剧化的起伏，这反而让 {{SENDER}} 更珍惜现在拥有的平稳。真正想写进未来的，不是轰烈，而是长期、稳定、克制却明确的站在你身边。",
     promise:
-      "{{SENDER}} 想给 {{RECIPIENT}} 的，不只是当下的喜欢，而是可以被时间反复验证的认真和站在你身边的长期感。",
+      "{{SENDER}} 想给 {{RECIPIENT}} 的，不只是某个阶段的情绪，而是能被时间反复验证的认真和长期感。",
   },
 ];
 const PERSONAL_PROMISES = [
-  "{{SENDER}} 会把偏爱给得更明确一点，让 {{RECIPIENT}} 不需要反复猜测。",
-  "{{SENDER}} 会把陪伴做得更稳定一点，不只是说在乎，而是真的出现在 {{RECIPIENT}} 身边。",
-  "{{SENDER}} 会把这段关系当成长期作品来经营，不敷衍、不缺席，也不轻易放手。",
-  "{{SENDER}} 会记得从学校开始的每一步靠近，也会认真走好以后更长的路。",
-  "{{SENDER}} 想和 {{RECIPIENT}} 把普通日子过得有质感，也把未来过得更值得期待。",
+  "{{SENDER}} 会把态度说得更明确，不让 {{RECIPIENT}} 一直猜。",
+  "{{SENDER}} 会继续稳定出现，让在乎这件事有实际分量。",
+  "{{SENDER}} 会把 {{RELATION}} 当成长线，不敷衍，也不轻易松手。",
+  "{{SENDER}} 会记得从学校开始的这段靠近，也认真走后面的路。",
+  "{{SENDER}} 想和 {{RECIPIENT}} 把普通日子过稳，把以后过清楚。",
 ];
+const PERSONAL_NOTES = [
+  {
+    id: "QN-01",
+    phase: "初遇",
+    mood: "克制",
+    scene: "学校",
+    date: "2022-02-16",
+    title: "第一次在学校见到你时，并没有立刻意识到后来会这么重要",
+    detail:
+      "2022 年 2 月 16 日，{{SENDER}} 第一次在学校见到 {{RECIPIENT}}。那时没有很强烈的感觉，也没有任何夸张的开场。可正因为那天足够普通，后来再回头看时，才会更清楚地意识到，很多真正改变生活的人，最开始都只是安静地出现。",
+    promise: "{{SENDER}} 会记得，重要的人也可能从最普通的一天开始。",
+    palette: "tone-001",
+    tags: ["学校", "第一次见面", "日常"],
+  },
+  {
+    id: "QN-02",
+    phase: "初遇",
+    mood: "温和",
+    scene: "学校",
+    date: "2022-02-16",
+    title: "后来回头看，那一天其实已经把故事放进了日常里",
+    detail:
+      "关于第一次见面的记忆并不轰烈，甚至可以说没什么特别感觉。可也是这种不刻意，才让 {{SENDER}} 更愿意承认，有些关系不是突然降临，而是在回头时才看清分量。",
+    promise: "{{SENDER}} 会珍惜一切看似平常、却真实改变了我的开始。",
+    palette: "tone-002",
+    tags: ["学校", "回头看", "开始"],
+  },
+  {
+    id: "QN-03",
+    phase: "相知",
+    mood: "安稳",
+    scene: "疫情期间",
+    date: "2022-12-01",
+    title: "疫情里几乎每天一起打游戏，是最早成型的陪伴感",
+    detail:
+      "对 {{SENDER}} 来说，这不是某个单点时刻，而是一整段稳定出现的时间。疫情期间，{{SENDER}} 和 {{RECIPIENT}} 几乎每天都会一起打游戏。上线、组队、聊天，这些看起来很轻的东西，慢慢把彼此放进了更真实的日常里。",
+    promise: "{{SENDER}} 会把陪伴落到行动里，而不是只停留在说说而已。",
+    palette: "tone-003",
+    tags: ["疫情", "游戏", "陪伴"],
+  },
+  {
+    id: "QN-04",
+    phase: "相知",
+    mood: "明朗",
+    scene: "线上游戏",
+    date: "2022-12-15",
+    title: "很多话没有特地说出口，但上线这件事本身就在回应彼此",
+    detail:
+      "有些关系不是靠很重的话语确认的，而是靠一次次稳定出现慢慢成形。那段时间里，{{SENDER}} 会习惯性地等 {{RECIPIENT}} 一起上线，也开始习惯在一天里自然想到你。",
+    promise: "{{SENDER}} 会继续珍惜这种不夸张却很真实的回应方式。",
+    palette: "tone-004",
+    tags: ["游戏", "上线", "回应"],
+  },
+  {
+    id: "QN-05",
+    phase: "确认",
+    mood: "坚定",
+    scene: "学校",
+    date: "2023-03-03",
+    title: "2023 年 3 月 3 日，在学校里，我们终于有了明确的名字",
+    detail:
+      "那一天在学校，{{RECIPIENT}} 先开了口。对 {{SENDER}} 来说，这比任何铺陈都更直接。因为从那一刻开始，{{RELATION}} 不再只是靠近，而是第一次被清楚地说出来。",
+    promise: "{{SENDER}} 会把这一天一直记得，因为它让一段关系真正变得清楚。",
+    palette: "tone-005",
+    tags: ["学校", "确定关系", "2023-03-03"],
+  },
+  {
+    id: "QN-06",
+    phase: "确认",
+    mood: "克制",
+    scene: "学校",
+    date: "2023-03-03",
+    title: "他先开口的那一刻，让这段关系从靠近变成了确定",
+    detail:
+      "不是所有重要时刻都需要热烈的场面。有时只是一句明确的话，就足够让之前所有模糊的心情都落下来。{{SENDER}} 记得的，就是那种终于可以认真往下走的感觉。",
+    promise: "{{SENDER}} 会珍惜 {{RECIPIENT}} 先迈出的那一步，也会认真接住这份确定。",
+    palette: "tone-006",
+    tags: ["先开口", "确定", "学校"],
+  },
+  {
+    id: "QN-07",
+    phase: "并肩",
+    mood: "明朗",
+    scene: "长春广告展",
+    date: "2023-03-07",
+    title: "去长春广告展那天，真正留在记忆里的其实是一路聊天",
+    detail:
+      "长春广告展当然是目的地，但更让 {{SENDER}} 记得的，是一路上的聊天。很多时候，重要的不是去哪里，而是和谁一起去，以及在路上能不能一直待在同一个节奏里。",
+    promise: "{{SENDER}} 想把这种自然聊天的感觉，一直留到以后更多次远行里。",
+    palette: "tone-007",
+    tags: ["长春", "广告展", "聊天"],
+  },
+  {
+    id: "QN-08",
+    phase: "并肩",
+    mood: "安稳",
+    scene: "长春路上",
+    date: "2023-03-07",
+    title: "比起目的地，更难得的是和你待在同一个节奏里",
+    detail:
+      "对 {{SENDER}} 来说，那次出行最有分量的部分不是某个具体展位，也不是某个热闹画面，而是和 {{RECIPIENT}} 在路上慢慢聊、慢慢走时，那种不用刻意也很舒服的同步感。",
+    promise: "{{SENDER}} 会珍惜这种同步感，也会继续把并肩这件事做得更长。",
+    palette: "tone-008",
+    tags: ["长春", "节奏", "并肩"],
+  },
+  {
+    id: "QN-09",
+    phase: "未来",
+    mood: "温和",
+    scene: "日常",
+    date: "2024-01-01",
+    title: "我们的关系没有太多戏剧化转折，却一直在慢慢变稳",
+    detail:
+      "{{SENDER}} 和 {{RECIPIENT}} 没有太多刻意设计出来的起伏，也没有那种非要写出来才显得动人的冲突桥段。可正因为如此，{{SENDER}} 反而更珍惜这种安静、稳定、慢慢成形的过程。",
+    promise: "{{SENDER}} 会继续把稳定感留在这段关系里，不让重要的人被忽冷忽热地对待。",
+    palette: "tone-009",
+    tags: ["稳定", "日常", "长期"],
+  },
+  {
+    id: "QN-10",
+    phase: "未来",
+    mood: "坚定",
+    scene: "以后",
+    date: "2026-01-01",
+    title: "我想把以后过成更清楚也更长久的一段时间",
+    detail:
+      "写下这页，不是为了把喜欢说得很满，而是想把态度放得更清楚。{{SENDER}} 想和 {{RECIPIENT}} 继续把普通日子过稳，把重要时刻留住，把以后真正过成一段可以被时间证明的关系。",
+    promise: "{{SENDER}} 想给 {{RECIPIENT}} 的，是站得住、也走得久的以后。",
+    palette: "tone-010",
+    tags: ["以后", "长期", "认真"],
+  },
+];
+const ACTIVE_NOTES = PERSONAL_NOTES.length > 0 ? PERSONAL_NOTES : LOVE_NOTES;
+const ACTIVE_PROMISES = PERSONAL_PROMISES.length > 0 ? PERSONAL_PROMISES : PROMISE_LIBRARY;
 
 const state = {
   page: 1,
   pageSize: isMobileViewport ? 8 : 12,
-  filteredNotes: [...LOVE_NOTES],
+  filteredNotes: [...ACTIVE_NOTES],
   pinnedPromises: [],
-  activePromise: PERSONAL_PROMISES[0] || PROMISE_LIBRARY[0],
+  activePromise: ACTIVE_PROMISES[0],
   quizStep: 0,
   quizScore: 0,
   ceremonyRunning: false,
@@ -603,7 +737,7 @@ class NotesExplorer {
     const keyword = this.searchInput.value.trim().toLowerCase();
     const mood = this.moodFilter.value;
     const phase = this.phaseFilter.value;
-    state.filteredNotes = LOVE_NOTES.filter((note) => {
+    state.filteredNotes = ACTIVE_NOTES.filter((note) => {
       const keywordHit =
         keyword.length === 0 ||
         [applyTemplate(note.title), applyTemplate(note.detail), applyTemplate(note.promise), note.scene, ...note.tags].join(" ").toLowerCase().includes(keyword);
@@ -621,7 +755,7 @@ class NotesExplorer {
 
   render() {
     if (state.filteredNotes.length === 0) {
-      this.grid.innerHTML = `<article class="note-card tone-006"><h3>未找到匹配文案</h3><p>请尝试其他关键词，或切换情绪与阶段筛选。</p></article>`;
+      this.grid.innerHTML = `<article class="note-card tone-006"><h3>未找到匹配记录</h3><p>可以试试“学校”“长春”“游戏”等关键词，或者切换筛选条件。</p></article>`;
       this.pagination.innerHTML = "";
       return;
     }
@@ -636,7 +770,7 @@ class NotesExplorer {
           <p>${applyTemplate(note.detail).slice(0, 86)}...</p>
           <footer>
             <span>${note.scene}</span>
-            <strong>查看详情</strong>
+            <strong>展开片段</strong>
           </footer>
         </article>
       `,
@@ -646,13 +780,13 @@ class NotesExplorer {
     this.grid.querySelectorAll(".note-card").forEach((card) => {
       const id = card.dataset.noteId;
       card.addEventListener("click", () => {
-        const note = LOVE_NOTES.find((entry) => entry.id === id);
+        const note = ACTIVE_NOTES.find((entry) => entry.id === id);
         this.onOpenNote(note);
       });
       card.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          const note = LOVE_NOTES.find((entry) => entry.id === id);
+          const note = ACTIVE_NOTES.find((entry) => entry.id === id);
           this.onOpenNote(note);
         }
       });
@@ -697,7 +831,7 @@ class PromiseTheater {
   init() {
     this.renderCurrent();
     this.nextButton.addEventListener("click", () => {
-      const promisePool = PERSONAL_PROMISES.length > 0 ? PERSONAL_PROMISES : PROMISE_LIBRARY;
+      const promisePool = ACTIVE_PROMISES;
       this.pointer = (this.pointer + 1) % promisePool.length;
       state.activePromise = promisePool[this.pointer];
       this.renderCurrent();
@@ -707,9 +841,9 @@ class PromiseTheater {
         state.pinnedPromises.unshift(state.activePromise);
         state.pinnedPromises = state.pinnedPromises.slice(0, 10);
         this.renderPinned();
-        toast.push("已收藏当前文案");
+        toast.push("已保存当前句子");
       } else {
-        toast.push("这条文案已在收藏中");
+        toast.push("这句话已经在收藏里了");
       }
     });
   }
@@ -763,7 +897,7 @@ function composeSignatureLine() {
   const future = COMPOSER_BANK.future[state.composer.future];
   const scene = SCENES[state.activeScene];
   return applyTemplate(
-    `从学校开始，到 2023 年 3 月 3 日真正有了名字，{{SENDER}} 想继续用一种${tone}的方式和 {{RECIPIENT}} 一起${gesture}，再慢慢${future}。如果{{RELATION}}是一部作品，那它此刻最适合被放进「${scene.tone}」这个镜头里。`,
+    `从学校开始，到 2023 年 3 月 3 日真正有了名字，{{SENDER}} 想继续以${tone}的方式和 {{RECIPIENT}} 一起${gesture}，也把 {{RELATION}} 慢慢${future}。如果要给现在的心情一个镜头，它更像「${scene.tone}」里那种安静但明确的光。`,
   );
 }
 
@@ -815,7 +949,7 @@ function attachAtelier() {
       state.composer.gesture = randomInt(0, COMPOSER_BANK.gesture.length - 1);
       state.composer.future = randomInt(0, COMPOSER_BANK.future.length - 1);
       renderComposer();
-      toast.push("已生成新的签名句", 1800);
+      toast.push("已生成新的表达", 1800);
     });
   }
 
@@ -828,7 +962,7 @@ function attachAtelier() {
         state.activePromise = state.generatedLine;
         promiseTheater.renderCurrent();
         promiseTheater.renderPinned();
-        toast.push("已加入誓言收藏", 2000);
+        toast.push("已保存到句子收藏", 2000);
       } else {
         toast.push("这句已经收藏过了", 1800);
       }
@@ -855,11 +989,11 @@ class QuizEngine {
       this.progress.textContent = "测试完成";
       this.question.textContent = `匹配度得分 ${score} / ${total}`;
       if (score >= 4) {
-        this.feedback.textContent = "你们的关系共识很高，可以直接进入发布版本。";
+        this.feedback.textContent = "你们的节奏很一致，这页已经有自己的气质了。";
       } else if (score >= 2) {
-        this.feedback.textContent = "匹配度不错，继续补充真实细节会更动人。";
+        this.feedback.textContent = "节奏已经出来了，再补一点真实细节会更完整。";
       } else {
-        this.feedback.textContent = "这只是模板互动，真实表达永远比得分更重要。";
+        this.feedback.textContent = "分数不重要，把真实想法留在这里更重要。";
       }
       this.answers.innerHTML = `<button type="button" class="solid-btn magnetic" id="quiz-restart">重新测试</button>`;
       const restartButton = document.getElementById("quiz-restart");
@@ -886,9 +1020,9 @@ class QuizEngine {
         const isCorrect = index === current.answer;
         if (isCorrect) {
           state.quizScore += 1;
-          this.feedback.textContent = "回答命中模板预设，关系方向很清晰。";
+          this.feedback.textContent = "这个选择很贴近当前页面气质。";
         } else {
-          this.feedback.textContent = "选项不同也没关系，关键是把真实想法说出来。";
+          this.feedback.textContent = "不同选择也没关系，真实比标准答案更重要。";
         }
         window.setTimeout(() => {
           state.quizStep += 1;
@@ -988,7 +1122,7 @@ function closeNoteModal() {
 }
 
 function seedPaletteWall() {
-  const topPalette = LOVE_NOTES.slice(0, 84);
+  const topPalette = Array.from({ length: Math.max(48, ACTIVE_NOTES.length * 6) }, (_, index) => ACTIVE_NOTES[index % ACTIVE_NOTES.length]);
   dom.paletteWall.innerHTML = topPalette
     .map(
       (note) =>
@@ -1033,11 +1167,11 @@ function updateHeroStats() {
     anniversaryYear > 2000;
   const firstDate = hasAnniversary
     ? new Date(anniversaryYear, anniversaryMonth - 1, anniversaryDay).getTime()
-    : LOVE_NOTES.map((note) => new Date(note.date).getTime()).sort((a, b) => a - b)[0] || Date.now();
+    : ACTIVE_NOTES.map((note) => new Date(note.date).getTime()).sort((a, b) => a - b)[0] || Date.now();
   const days = Math.max(1, Math.floor((Date.now() - firstDate) / (1000 * 60 * 60 * 24)));
   dom.statDays.textContent = formatNumber(days);
-  dom.statNotes.textContent = formatNumber(LOVE_NOTES.length);
-  dom.statPromises.textContent = formatNumber(PROMISE_LIBRARY.length);
+  dom.statNotes.textContent = formatNumber(ACTIVE_NOTES.length);
+  dom.statPromises.textContent = formatNumber(ACTIVE_PROMISES.length);
 }
 
 function attachModalEvents() {
@@ -1059,7 +1193,7 @@ function attachShuffleAction() {
     state.filteredNotes = [...state.filteredNotes].sort(() => Math.random() - 0.5);
     state.page = 1;
     notesExplorer.render();
-    toast.push("已随机重排文案");
+    toast.push("已重新排列记录");
   });
 }
 
@@ -1068,7 +1202,7 @@ function attachRandomNoteAction() {
     const scenes = Object.keys(SCENES);
     state.activeScene = scenes[randomInt(0, scenes.length - 1)];
     renderSceneStage();
-    openNoteModal(sample(PERSONAL_STORY));
+    openNoteModal(sample(ACTIVE_NOTES));
   });
 }
 
@@ -1085,7 +1219,7 @@ function attachConfettiAction() {
     state.ceremonyRunning = true;
     fireworks.start();
     dom.finaleCard.style.transform = "translateY(-4px) scale(1.01)";
-    toast.push("烟花效果已点亮");
+    toast.push("结尾仪式已开启");
     window.setTimeout(() => {
       dom.finaleCard.style.transform = "";
       state.ceremonyRunning = false;
@@ -1095,16 +1229,17 @@ function attachConfettiAction() {
 
 function attachLetterExport() {
   dom.exportLetter.addEventListener("click", () => {
-    const header = applyTemplate("致 {{RECIPIENT}} 的一封信（模板版）\n\n");
+    const header = applyTemplate("致 {{RECIPIENT}} 的一封信\n\n");
     const body = [
       applyTemplate("你好，{{RECIPIENT}}。"),
-      applyTemplate("这是一份可复用的高端告白模板，你可以替换成真实故事后直接发布。"),
+      applyTemplate("这不是模板，也不是为了把情绪说得很满。"),
+      applyTemplate("我只是想把已经发生过的那些普通时刻，认真留在这里。"),
       "",
-      "建议保留的承诺句：",
+      "这页里我最想长期做到的几句话：",
       ...state.pinnedPromises.slice(0, 5).map((item, idx) => `${idx + 1}. ${applyTemplate(item)}`),
       "",
-      "今日随机记忆卡：",
-      `- ${applyTemplate(sample(LOVE_NOTES).title)}`,
+      "今天随机抽到的一段记录：",
+      `- ${applyTemplate(sample(ACTIVE_NOTES).title)}`,
       "",
       applyTemplate("署名：{{SENDER}}"),
     ].join("\n");
@@ -1112,12 +1247,12 @@ function attachLetterExport() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = TEMPLATE.exportFileName || "confession-template-letter.txt";
+    a.download = TEMPLATE.exportFileName || "private-letter.txt";
     document.body.append(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast.push("模板信已导出", 2200);
+    toast.push("这封信已导出", 2200);
   });
 }
 
@@ -1273,21 +1408,21 @@ function triggerEasyEggOne() {
   fireworks.start(2600);
   if (!easterState.easyOneTriggered) {
     easterState.easyOneTriggered = true;
-    toast.push("彩蛋①触发：三连点品牌进入甜蜜雨模式", 3200);
+    toast.push("彩蛋①触发：页面进入金色漂浮模式", 3200);
   } else {
-    toast.push("甜蜜雨再次触发", 1800);
+    toast.push("金色漂浮再次出现", 1800);
   }
 }
 
 function triggerEasyEggTwo() {
   spawnHeartLayer({ count: isMobileViewport ? 16 : 24, symbols: ["❤", "♡", "✧"] });
   fireworks.start(2200);
-  openNoteModal(sample(PERSONAL_STORY));
+  openNoteModal(sample(ACTIVE_NOTES));
   if (!easterState.easyTwoTriggered) {
     easterState.easyTwoTriggered = true;
-    toast.push("彩蛋②触发：关键词已解锁浪漫模式", 3200);
+    toast.push("彩蛋②触发：已调出一段隐藏记录", 3200);
   } else {
-    toast.push("浪漫模式再次触发", 1800);
+    toast.push("隐藏记录再次打开", 1800);
   }
 }
 
@@ -1297,14 +1432,14 @@ function triggerHiddenEgg() {
   document.body.classList.add("is-aurora");
   spawnHeartLayer({ count: isMobileViewport ? 24 : 34, symbols: ["✦", "✧", "❤"], secret: true, duration: 5200 });
   fireworks.start(5200);
-  toast.push("隐藏彩蛋已解锁：Aurora Signature Mode", 4200);
+  toast.push("隐藏彩蛋已解锁：极光签名模式", 4200);
 }
 
 function checkSearchEasterEgg(rawKeyword) {
   const keyword = String(rawKeyword || "").trim().toLowerCase();
   if (!keyword) return;
   if (Date.now() - easterState.keywordCooldownAt < 3200) return;
-  if (/(^|\\s)(520|1314)(\\s|$)|iloveyou|forever|love/.test(keyword)) {
+  if (/(^|\\s)(520|1314)(\\s|$)|iloveyou|forever|love|宝宝|辛视野|郑权威/.test(keyword)) {
     easterState.keywordCooldownAt = Date.now();
     triggerEasyEggTwo();
   }
@@ -1365,9 +1500,9 @@ async function runPreloader() {
 
 async function bootstrap() {
   const typewriterLines = [
-    "{{RECIPIENT}}，这一页不是展示，而是 {{SENDER}} 写给你的一次郑重偏爱。",
-    "从 2023 年 3 月 3 日开始，我想把关于 {{RELATION}} 的认真，做成一件可以反复打开的作品。",
-    "如果高级感是一种表达方式，那 {{SENDER}} 想用最克制也最坚定的方式告诉 {{RECIPIENT}}：我一直在认真爱你。",
+    "{{RECIPIENT}}，这一页不是展示，而是 {{SENDER}} 留给你的一份私人记录。",
+    "从 2023 年 3 月 3 日开始，我想把关于 {{RELATION}} 的认真，整理成一页可以反复打开的东西。",
+    "如果高级感是一种表达方式，那 {{SENDER}} 更想用克制但明确的方式告诉 {{RECIPIENT}}：我一直很认真地在对待你。",
   ].map((line) => applyTemplate(line));
   const typewriter = new Typewriter(dom.typedIntro, typewriterLines);
 
@@ -1379,8 +1514,8 @@ async function bootstrap() {
   document.title = `${TEMPLATE.senderName} | 致 ${TEMPLATE.recipientName}`;
   const brandAccent = document.querySelector(".brand span");
   if (brandAccent) brandAccent.textContent = `致${TEMPLATE.recipientName}`;
-  if (dom.finaleTitle) dom.finaleTitle.textContent = applyTemplate("{{RECIPIENT}}，愿未来所有重要时刻，我都能站在你身边。");
-  if (dom.finaleBody) dom.finaleBody.textContent = applyTemplate("这页是 {{SENDER}} 送给 {{RECIPIENT}} 的。不是为了把喜欢说得夸张，而是想把我对你的认真、偏爱和长期心意，安静而笃定地放在这里。");
+  if (dom.finaleTitle) dom.finaleTitle.textContent = applyTemplate("{{RECIPIENT}}，以后如果还有很多重要时刻，我想继续站在你这边。");
+  if (dom.finaleBody) dom.finaleBody.textContent = applyTemplate("这页是 {{SENDER}} 写给 {{RECIPIENT}} 的。不是为了把情绪放大，而是想把已经发生过的普通片段、已经确定下来的认真，以及我想继续给你的长期感，安静地留在这里。");
 
   updateHeroStats();
   seedTimeline();
@@ -1410,7 +1545,7 @@ async function bootstrap() {
   magnetic.init();
   typewriter.init();
 
-  toast.push("高端告白模板已就绪", 2200);
+  toast.push("私人页面已就绪", 2200);
 }
 
 bootstrap();
