@@ -1,0 +1,104 @@
+// Prisma schema for AI Image Generator Platform
+// Datasource: SQLite (file). Production path is set via DATABASE_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ApiSource {
+  id   String @id @default(cuid())
+  name String
+
+  provider String
+  docUrl   String?
+
+  baseUrl  String
+  endpoint String
+  method   String @default("POST")
+
+  // Auth
+  authType      String  @default("bearer_token") // bearer_token | api_key_header | api_key_query | none
+  apiKeyEnvName String?
+
+  // Model identifier passed to provider
+  model String?
+
+  // Request shape
+  requestContentType  String  @default("application/json")
+  requestBodyTemplate String  // JSON string - rendered with {{prompt}} {{aspectRatio}} {{callbackUrl}} {{model}}
+
+  // Field paths (dot notation, e.g. "data.taskId" or "data.images.0.url")
+  promptFieldPath      String?
+  aspectRatioFieldPath String?
+  taskIdPath           String?
+  imageUrlPath         String?
+
+  // Callback support
+  callbackSupported    Boolean @default(false)
+  callbackUrlFieldPath String?
+
+  // Polling support
+  pollingSupported  Boolean @default(false)
+  statusEndpoint    String?
+  statusMethod      String? // GET | POST
+  statusTaskIdParam String? // e.g. "taskId" for query, or "data.taskId" for body
+  statusPath        String?
+  successStatusValue String?
+  failedStatusValue  String?
+
+  errorMessagePath String?
+
+  // List of supported aspect ratios as JSON string, e.g. ["1:1","16:9"]
+  supportedAspectRatios String  @default("[\"auto\",\"1:1\",\"16:9\",\"9:16\",\"4:3\",\"3:4\"]")
+
+  notes String?
+
+  enabled   Boolean @default(true)
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tasks ImageTask[]
+
+  @@index([enabled])
+  @@index([isDefault])
+}
+
+model ImageTask {
+  id String @id @default(cuid())
+
+  // Provider task identifier (returned by provider). May be empty until known.
+  taskId String? @unique
+
+  apiSourceId   String
+  apiSourceName String
+
+  // pending | processing | success | failed
+  status String @default("pending")
+
+  prompt       String
+  aspectRatio  String?
+
+  imageUrl     String?
+
+  // JSON strings of raw payloads
+  rawResponse String?
+  rawCallback String?
+
+  error String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  apiSource ApiSource @relation(fields: [apiSourceId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([apiSourceId])
+  @@index([createdAt])
+}
