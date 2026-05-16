@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
   }
 
   if (!checkPassword(parsed.data.password)) {
-    // Small delay-ish noise; consistent error
+    // Add a small delay to discourage online brute-force attempts
+    await new Promise((resolve) => setTimeout(resolve, 600));
     return NextResponse.json({ success: false, error: 'Invalid password' }, { status: 401 });
   }
 

@@ -1,6 +1,9 @@
 /**
  * Fetch a public API documentation URL and return cleaned text suitable for
  * feeding to an LLM.
+ *
+ * Note: redirects are followed manually so we can re-check each hop with
+ * isUrlSafe() and prevent SSRF via 30x redirects to private hosts.
  */
 import * as cheerio from 'cheerio';
 import { isUrlSafe } from './validators';
@@ -13,27 +16,55 @@ export interface FetchedDoc {
 
 const MAX_BYTES = 1_500_000; // ~1.5 MB
 const MAX_TEXT_CHARS = 60_000; // Hard cap fed to the LLM
+const MAX_REDIRECTS = 5;
+const FETCH_TIMEOUT_MS = 20_000;
 
-export async function fetchAndCleanDoc(url: string): Promise<FetchedDoc> {
-  const safety = isUrlSafe(url);
+async function safeFetchWithRedirects(initialUrl: string): Promise<Response> {
+  let url = initialUrl;
+  for (let i = 0; i <= MAX_REDIRECTS; i++) {
+    const safety = isUrlSafe(url);
+    if (!safety.ok) {
+      throw new Error(`Refusing to fetch unsafe URL: ${safety.reason}`);
+    }
+    const res = await fetch(url, {
+      method: 'GET',
+      redirect: 'manual',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      headers: {
+        'User-Agent': 'AIImageGeneratorPlatform/1.0 (+docs-parser)',
+        Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.5',
+      },
+    });
+    // Manual redirects: follow the Location header but re-check isUrlSafe()
+    if (res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get('location');
+      if (!loc) {
+        return res;
+      }
+      // Resolve relative locations against the previous URL
+      url = new URL(loc, url).toString();
+      // Drain body so the connection can be reused
+      try { await res.body?.cancel(); } catch { /* noop */ }
+      continue;
+    }
+    return res;
+  }
+  throw new Error(`Too many redirects (>${MAX_REDIRECTS})`);
+}
+
+export async function fetchAndCleanDoc(initialUrl: string): Promise<FetchedDoc> {
+  const safety = isUrlSafe(initialUrl);
   if (!safety.ok) {
     throw new Error(`Refusing to fetch unsafe URL: ${safety.reason}`);
   }
 
-  const res = await fetch(url, {
-    method: 'GET',
-    redirect: 'follow',
-    signal: AbortSignal.timeout(20_000),
-    headers: {
-      'User-Agent': 'AIImageGeneratorPlatform/1.0 (+docs-parser)',
-      Accept: 'text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.5',
-    },
-  });
+  const res = await safeFetchWithRedirects(initialUrl);
 
   if (!res.ok) {
     throw new Error(`Failed to fetch doc: HTTP ${res.status}`);
   }
 
+  const finalUrl = res.url || initialUrl;
   const contentType = (res.headers.get('content-type') || '').toLowerCase();
 
   // Read with a hard byte cap
@@ -59,7 +90,7 @@ export async function fetchAndCleanDoc(url: string): Promise<FetchedDoc> {
 
   if (contentType.includes('application/json')) {
     const truncated = raw.slice(0, MAX_TEXT_CHARS);
-    return { url, title: url, text: truncated };
+    return { url: finalUrl, title: finalUrl, text: truncated };
   }
 
   // HTML / unknown: parse with cheerio and extract text
@@ -67,7 +98,7 @@ export async function fetchAndCleanDoc(url: string): Promise<FetchedDoc> {
   // Drop noise
   $('script, style, noscript, svg, iframe, footer, nav, header').remove();
 
-  const title = ($('title').first().text() || $('h1').first().text() || url).trim();
+  const title = ($('title').first().text() || $('h1').first().text() || finalUrl).trim();
 
   // Prefer common doc containers; fall back to body
   const candidates = [
@@ -98,5 +129,5 @@ export async function fetchAndCleanDoc(url: string): Promise<FetchedDoc> {
     .join('\n');
 
   const truncated = cleaned.slice(0, MAX_TEXT_CHARS);
-  return { url, title, text: truncated };
+  return { url: finalUrl, title, text: truncated };
 }

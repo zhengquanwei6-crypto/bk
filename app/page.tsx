@@ -38,6 +38,9 @@ export default function HomePage() {
   const [toast, setToast] = useState<string | null>(null);
 
   const pollRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // A monotonically increasing token used to invalidate stale poll responses
+  // when the user submits a new request before the previous one resolved.
+  const submissionTokenRef = useRef(0);
 
   // Load API sources
   useEffect(() => {
@@ -93,13 +96,17 @@ export default function HomePage() {
       : DEFAULT_RATIOS;
   }, [currentSource]);
 
-  const startPolling = useCallback((taskId: string) => {
+  const startPolling = useCallback((taskId: string, token: number) => {
     let attempts = 0;
     const tick = async () => {
+      // Bail out if a newer submission has started
+      if (token !== submissionTokenRef.current) return;
       attempts += 1;
       try {
         const res = await fetch(`/api/task-status?taskId=${encodeURIComponent(taskId)}`, { cache: 'no-store' });
         const json = await res.json();
+        // Re-check token in case the user submitted again while the request was in flight
+        if (token !== submissionTokenRef.current) return;
         if (json.success && json.task) {
           setTask(json.task as TaskStatus);
           if (json.task.status === 'success' || json.task.status === 'failed') return;
@@ -108,7 +115,7 @@ export default function HomePage() {
         // network blip - keep trying
       }
       // Up to ~3 minutes (60 * 3s)
-      if (attempts < 60) {
+      if (attempts < 60 && token === submissionTokenRef.current) {
         pollRef.current = setTimeout(tick, 3000);
       }
     };
@@ -134,6 +141,12 @@ export default function HomePage() {
     }
     setSubmitting(true);
     setTask(null);
+    // Invalidate any in-flight poll from a previous submission
+    const token = ++submissionTokenRef.current;
+    if (pollRef.current) {
+      clearTimeout(pollRef.current);
+      pollRef.current = null;
+    }
     try {
       const res = await fetch('/api/generate-image', {
         method: 'POST',
@@ -154,7 +167,7 @@ export default function HomePage() {
       };
       setTask(initial);
       if (initial.status !== 'success' && initial.status !== 'failed') {
-        startPolling(json.taskId);
+        startPolling(json.taskId, token);
       }
     } catch (e) {
       setErrorMsg((e as Error).message);

@@ -216,14 +216,13 @@ git clone <this repo>
 cd ai-image-generator-platform
 cp .env.production.example .env
 # edit .env with your real values
-mkdir -p data
 docker compose up -d --build
 ```
 
 The container:
 
 - Runs `prisma db push` and seeds the default source on first start.
-- Persists SQLite at `./data/prod.db` (mounted to `/app/data` inside).
+- Persists SQLite in the `aig_data` Docker named volume.
 - Listens on `127.0.0.1:3000` (do not expose directly; use Nginx).
 
 ---
@@ -258,21 +257,27 @@ Certbot rewrites the Nginx config to enable TLS and sets up auto-renewal.
 
 ## 16. Backing up the SQLite database
 
-```bash
-# One-shot copy
-cp data/prod.db backups/prod.$(date +%F-%H%M).db
+The DB lives inside a named Docker volume (`aig_data`). Snapshot it via the
+running container — sqlite's online `.backup` is safe under concurrent writes:
 
-# Cron snapshot daily at 03:00
-echo "0 3 * * * cp /opt/ai-image-generator-platform/data/prod.db \
-  /opt/ai-image-generator-platform/backups/prod.\$(date +\\%F).db" | sudo tee /etc/cron.d/aig-backup
+```bash
+mkdir -p backups
+docker compose exec -T app sh -c "cp /app/data/prod.db /app/data/prod.snap.db"
+docker cp ai-image-generator:/app/data/prod.snap.db backups/prod.$(date +%F-%H%M).db
+docker compose exec -T app sh -c "rm -f /app/data/prod.snap.db"
 ```
 
-For a fully consistent backup while writes are happening, use `sqlite3 .backup`:
+For fully consistent backups under heavy load, use `sqlite3 .backup`:
 
 ```bash
 docker compose exec app sh -c "apk add --no-cache sqlite >/dev/null && \
   sqlite3 /app/data/prod.db '.backup /app/data/prod.backup.db'"
+docker cp ai-image-generator:/app/data/prod.backup.db backups/prod.$(date +%F-%H%M).db
 ```
+
+To automate, drop a wrapper at `/usr/local/bin/aig-backup.sh` and add a cron
+entry — see [`deploy/README.md`](deploy/README.md) section 7 for the full
+script.
 
 ---
 

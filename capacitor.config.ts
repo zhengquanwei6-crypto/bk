@@ -15,7 +15,6 @@ const config: CapacitorConfig = {
   // The Android project lives under ./android (created via `npx cap add android`).
   // We don't bundle a webDir because the WebView loads the live site directly.
   webDir: 'public',
-  bundledWebRuntime: false,
 
   server: {
     // === IMPORTANT ===

@@ -32,8 +32,7 @@ function buildUrl(source: ApiSource, apiKey: string | undefined): string {
 
   if (source.authType === 'api_key_query' && apiKey) {
     const sep = url.includes('?') ? '&' : '?';
-    const param = source.apiKeyEnvName ? 'api_key' : 'api_key';
-    url = `${url}${sep}${encodeURIComponent(param)}=${encodeURIComponent(apiKey)}`;
+    url = `${url}${sep}api_key=${encodeURIComponent(apiKey)}`;
   }
 
   return url;

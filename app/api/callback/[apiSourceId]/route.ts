@@ -6,13 +6,14 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /**
- * POST /api/callback/[apiSourceId]
  * Generic callback receiver. Looks up the API source, then uses its
  * configured paths (taskIdPath, imageUrlPath, errorMessagePath) to
  * locate fields in the incoming payload.
+ *
+ * Supports POST (JSON body), GET (query params), and POST with
+ * application/x-www-form-urlencoded body.
  */
-export async function POST(req: NextRequest, { params }: { params: { apiSourceId: string } }) {
-  const apiSourceId = params.apiSourceId;
+async function handleCallback(req: NextRequest, apiSourceId: string) {
   if (!apiSourceId) {
     return NextResponse.json({ success: false, error: 'Missing apiSourceId' }, { status: 400 });
   }
@@ -22,12 +23,9 @@ export async function POST(req: NextRequest, { params }: { params: { apiSourceId
     return NextResponse.json({ success: false, error: 'API source not found' }, { status: 404 });
   }
 
-  let payload: unknown = null;
-  try {
-    const txt = await req.text();
-    payload = txt ? JSON.parse(txt) : {};
-  } catch {
-    return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
+  const payload = await readCallbackPayload(req);
+  if (payload === null) {
+    return NextResponse.json({ success: false, error: 'Invalid payload' }, { status: 400 });
   }
 
   const taskId = getStringByPath(payload, source.taskIdPath);
@@ -35,7 +33,6 @@ export async function POST(req: NextRequest, { params }: { params: { apiSourceId
   const errorMessage = getStringByPath(payload, source.errorMessagePath);
 
   if (!taskId) {
-    // Still record this somewhere? We have no key to update, so just 200 it.
     return NextResponse.json(
       { success: false, error: 'Could not extract taskId from callback' },
       { status: 400 },
@@ -78,7 +75,50 @@ export async function POST(req: NextRequest, { params }: { params: { apiSourceId
   return NextResponse.json({ success: true });
 }
 
-// Some providers use GET callbacks - support them as a courtesy
-export async function GET(req: NextRequest, ctx: { params: { apiSourceId: string } }) {
-  return POST(req, ctx);
+/**
+ * Read the callback payload as a plain object, regardless of method/content-type.
+ * Returns null if the body could not be parsed at all.
+ */
+async function readCallbackPayload(req: NextRequest): Promise<Record<string, unknown> | null> {
+  // GET: collect query params into an object
+  if (req.method === 'GET') {
+    const obj: Record<string, unknown> = {};
+    req.nextUrl.searchParams.forEach((v, k) => { obj[k] = v; });
+    return obj;
+  }
+
+  const contentType = (req.headers.get('content-type') || '').toLowerCase();
+  const text = await req.text();
+
+  if (!text) return {};
+
+  if (contentType.includes('application/json')) {
+    try {
+      const parsed = JSON.parse(text);
+      return isPlainObject(parsed) ? parsed : { raw: parsed };
+    } catch { return null; }
+  }
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    const obj: Record<string, unknown> = {};
+    new URLSearchParams(text).forEach((v, k) => { obj[k] = v; });
+    return obj;
+  }
+  // Fallback: try JSON, else expose as { raw }
+  try {
+    const parsed = JSON.parse(text);
+    return isPlainObject(parsed) ? parsed : { raw: parsed };
+  } catch { return { raw: text }; }
+}
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+export async function POST(req: NextRequest, { params }: { params: { apiSourceId: string } }) {
+  return handleCallback(req, params.apiSourceId);
+}
+
+// Some providers use GET callbacks with query params - support them as a courtesy
+export async function GET(req: NextRequest, { params }: { params: { apiSourceId: string } }) {
+  return handleCallback(req, params.apiSourceId);
 }

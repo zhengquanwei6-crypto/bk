@@ -34,12 +34,14 @@ Edit `.env` and set:
 ## 3. Build and start
 
 ```bash
-mkdir -p data
 docker compose up -d --build
 docker compose logs -f
 ```
 
 The app listens on `127.0.0.1:3000`. Don't expose it directly; use Nginx.
+
+> SQLite data is persisted in a named Docker volume (`aig_data`). To inspect
+> or back it up, see [section 7](#7-backup-the-sqlite-database) below.
 
 ## 4. Nginx + HTTPS
 
@@ -85,19 +87,38 @@ The data volume (`./data`) is preserved.
 
 ## 7. Backup the SQLite database
 
-```bash
-# One-shot snapshot
-cp data/prod.db backups/prod.$(date +%F-%H%M).db
+The DB lives inside the `aig_data` named volume. Use the running container to
+snapshot it (works with sqlite's online `.backup` so you don't need to stop
+the app):
 
-# Or with sqlite3 (atomic):
+```bash
+mkdir -p backups
+# One-shot copy via container shell
+docker compose exec app sh -c "cp /app/data/prod.db /app/data/prod.snap.db"
+docker cp ai-image-generator:/app/data/prod.snap.db backups/prod.$(date +%F-%H%M).db
+docker compose exec app sh -c "rm -f /app/data/prod.snap.db"
+
+# Or with sqlite3 (atomic, safe under writes):
 docker compose exec app sh -c "apk add --no-cache sqlite >/dev/null && \
   sqlite3 /app/data/prod.db \".backup /app/data/prod.backup.db\""
+docker cp ai-image-generator:/app/data/prod.backup.db backups/prod.$(date +%F-%H%M).db
 ```
 
-Schedule the snapshot via `cron`:
+Schedule the snapshot via `cron` (a small shell wrapper avoids escaping
+issues; create `/usr/local/bin/aig-backup.sh` and `chmod +x` it):
+
+```sh
+#!/bin/sh
+set -e
+cd /opt/ai-image-generator-platform
+mkdir -p backups
+docker compose exec -T app sh -c "cp /app/data/prod.db /app/data/prod.snap.db"
+docker cp ai-image-generator:/app/data/prod.snap.db "backups/prod.$(date +%F).db"
+docker compose exec -T app sh -c "rm -f /app/data/prod.snap.db"
+```
 
 ```cron
-0 3 * * * cd /opt/ai-image-generator-platform && cp data/prod.db backups/prod.$(date +\%F).db
+0 3 * * * /usr/local/bin/aig-backup.sh
 ```
 
 ## 8. Common errors
